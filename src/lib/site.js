@@ -4,4 +4,6 @@ export const SITE = {
   tagline: "日付の数え方まで、きちんと。",
   description:
     "四十九日・営業日・生後日数・クーリングオフ期限など、暮らしの日付をかんたんに計算できる無料ツール集。「初日を含めるかどうか」の数え方まで丁寧に解説します。",
+  // Google Analytics 4 の測定ID（G-XXXXXXXXXX）。空文字ならタグは出力されない
+  gaId: "G-5Q62MDVJFT",
 };
