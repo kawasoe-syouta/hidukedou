@@ -4,5 +4,10 @@
   "compatibility_date": "2026-07-05",
   "assets": {
     "directory": "./dist"
-  }
+  },
+  // カスタムドメイン。deploy時に自動でDNSレコードとSSL証明書が設定される
+  "routes": [
+    { "pattern": "hizukedo.com", "custom_domain": true },
+    { "pattern": "www.hizukedo.com", "custom_domain": true }
+  ]
 }
