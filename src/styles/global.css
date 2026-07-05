@@ -106,6 +106,16 @@ small, .small { font-size: 0.82rem; color: var(--muted); }
   color: var(--ink);
   min-height: 2.7rem;
   max-width: 100%;
+  min-width: 0;
+}
+/* iOS Safari: UA描画のままだと日付入力が内在幅で固定され、
+   親要素より広くはみ出すことがあるため自前描画に切り替える */
+.calc input[type="date"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 10.5rem;
+  display: inline-flex;
+  align-items: center;
 }
 .calc input:focus-visible, .calc select:focus-visible, .calc button:focus-visible,
 a:focus-visible, summary:focus-visible {
