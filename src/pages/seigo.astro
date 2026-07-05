@@ -1,0 +1,107 @@
+---
+import ToolLayout from "../layouts/ToolLayout.astro";
+
+const faqs = [
+  {
+    q: "生後日数は生まれた日を0日と1日、どちらで数えますか？",
+    a: "母子健康手帳では生まれた日を「生後0日」と数えます。本ツールの「今日で生後◯日」もこの数え方です。一方、お七夜や百日祝いなどの伝統行事は、生まれた日を「1日目」と数えるのが慣例です。本ツールでは行事の日付は慣例どおり1日目起算で計算し、その旨を明記しています。",
+  },
+  {
+    q: "月齢（生後◯か月）の数え方は？",
+    a: "毎月の「生まれた日と同じ日」を迎えるごとに1か月と数える方法（同日基準）が一般的で、本ツールもこの方式です。たとえば1月15日生まれの赤ちゃんは、7月15日で生後6か月になります。月末生まれで同じ日がない月は、その月の末日で繰り上がりとします。",
+  },
+  {
+    q: "お宮参りは必ず31日目・32日目に行くものですか？",
+    a: "男の子は生後31日目・女の子は32日目が古くからの目安とされますが、あくまで目安です。現在は赤ちゃんと母親の体調、天候、家族の都合を優先して、生後1か月頃〜100日頃までの間で選ぶ家庭が多くなっています。地域によって時期の慣習が異なる場合もあります。",
+  },
+  {
+    q: "百日祝い（お食い初め）はいつ行いますか？",
+    a: "生後100日目（生まれた日を1日目として数える）に行うのが基本ですが、110日目や120日目に行う地域もあります。ぴったりの日でなくても、前後の都合のよい日に行って問題ないとされています。",
+  },
+];
+
+const related = [
+  { href: "/kinenbi/", label: "記念日カウンター — 100日目・1000日目などの節目を計算" },
+  { href: "/column/shonichi/", label: "コラム: 「初日を含める・含めない」日数の数え方の基本" },
+];
+---
+
+<ToolLayout
+  title="生後日数計算 — 今日で生後何日？月齢とお祝い行事の日付を自動計算"
+  description="赤ちゃんの誕生日から、今日で生後何日・何週・何か月かを自動計算。お七夜・お宮参り・百日祝い（お食い初め）・ハーフバースデーの日付も一覧表示します。"
+  h1="生後日数・お祝い日の計算"
+  lead="誕生日を入力すると、今日で生後何日・何週・何か月かと、お七夜から1歳までのお祝い行事の日付を計算します。"
+  faqs={faqs}
+  related={related}
+>
+  <div class="calc" slot="calc">
+    <div class="row">
+      <div>
+        <label for="birth-date">赤ちゃんの誕生日</label>
+        <input type="date" id="birth-date" />
+      </div>
+      <button type="button" class="btn" id="calc-btn">計算する</button>
+    </div>
+    <div id="result" aria-live="polite"></div>
+  </div>
+
+  <Fragment slot="explain">
+    <h2>生後日数の数え方 — 「0日」と「1日目」の混在に注意</h2>
+    <p>
+      赤ちゃんの日数の数え方には、実は2つの流儀が混在しています。
+    </p>
+    <ul>
+      <li><strong>医療・母子健康手帳</strong>: 生まれた日を「生後0日」と数えます。「今日で生後◯日」はこちらです。</li>
+      <li><strong>伝統行事</strong>: 生まれた日を「1日目」と数えます。お七夜（7日目）、お宮参り（男児31日目・女児32日目）、百日祝い（100日目）はこちらの数え方です。</li>
+    </ul>
+    <p>
+      このため「生後100日」と「百日祝いの100日目」は1日ずれます。本ツールでは、生後日数は0日起算、行事の日付は慣例どおり1日目起算で計算しています。
+    </p>
+    <h2>行事の時期はあくまで目安</h2>
+    <p>
+      お宮参りや百日祝いの日数は伝統的な目安であり、その日でなければならないものではありません。赤ちゃんと家族の体調を最優先に、都合のよい日を選んでください。時期や作法は地域差も大きいので、両家の慣習も確認しておくと安心です。
+    </p>
+  </Fragment>
+</ToolLayout>
+
+<script>
+  import { parseYmd, toYmd, babyAge, babyEvents } from "../lib/dateCore.js";
+  import { milestoneTableHTML, shareButtonHTML, bindShareButtons, getParam, setParams } from "../lib/ui.js";
+
+  const $ = (id) => document.getElementById(id);
+  const result = $("result");
+
+  function run() {
+    const v = $("birth-date").value;
+    if (!v) return;
+    const birth = parseYmd(v);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    if (birth > today) {
+      result.innerHTML = `<p class="result-note">誕生日が未来の日付です。出産予定日までのお祝い日一覧として表示します。</p>` + eventsHTML(birth);
+      bindShareButtons(result);
+      setParams({ d: toYmd(birth) });
+      return;
+    }
+    const a = babyAge(birth, today);
+    result.innerHTML = `
+      <div class="result-big">今日で生後 ${a.days}日</div>
+      <p class="result-caption">生後${a.weeks}週${a.weekDays}日 ／ 生後${a.months}か月${a.monthRemainderDays}日（母子手帳と同じ0日起算）</p>
+      ${eventsHTML(birth)}
+      ${shareButtonHTML()}`;
+    bindShareButtons(result);
+    setParams({ d: toYmd(birth) });
+  }
+
+  function eventsHTML(birth) {
+    return milestoneTableHTML(babyEvents(birth), { firstColLabel: "お祝い行事" }) +
+      `<p class="result-note">行事の日付は、生まれた日を1日目とする慣例の数え方です。時期は目安であり、地域差があります。</p>`;
+  }
+
+  $("calc-btn").addEventListener("click", run);
+  const p = getParam("d");
+  if (p) {
+    $("birth-date").value = p;
+    run();
+  }
+</script>

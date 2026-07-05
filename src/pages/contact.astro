@@ -1,0 +1,20 @@
+---
+import Base from "../layouts/Base.astro";
+import { SITE } from "../lib/site.js";
+---
+
+<Base title="お問い合わせ" description={`${SITE.name}へのお問い合わせ方法のご案内。`}>
+  <article>
+    <h1>お問い合わせ</h1>
+    <p>
+      当サイトへのご意見・誤りのご指摘・ツールのご要望は、下記のフォームよりお寄せください。個別の法律相談・税務相談などにはお答えできませんのでご了承ください。
+    </p>
+    <div class="note-box">
+      <!-- 公開前にGoogleフォームを作成して、下のURLを差し替えてください -->
+      <p><a href="https://forms.gle/XXXXXXXXXXXX" rel="noopener" target="_blank">お問い合わせフォームを開く（Googleフォーム）</a></p>
+    </div>
+    <p class="small">
+      いただいた内容はサイト改善の目的にのみ使用します。すべてのお問い合わせへの返信をお約束するものではありません。
+    </p>
+  </article>
+</Base>

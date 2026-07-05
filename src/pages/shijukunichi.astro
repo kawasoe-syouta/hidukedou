@@ -1,0 +1,113 @@
+---
+import ToolLayout from "../layouts/ToolLayout.astro";
+
+const faqs = [
+  {
+    q: "四十九日はいつですか？数え方を教えてください。",
+    a: "亡くなった日（命日）を1日目として数えて49日目が四十九日です。日付の計算では「命日に48日を足した日」になります。たとえば7月1日が命日なら、四十九日は8月18日です。",
+  },
+  {
+    q: "四十九日が平日の場合はどうすればよいですか？",
+    a: "参列者が集まりやすいよう、四十九日当日より前の土曜日や日曜日に繰り上げて法要を営むのが一般的です。法要は当日より遅らせない（繰り下げない）のがならわしとされています。本ツールでは繰り上げ候補となる直前の土日も表示します。",
+  },
+  {
+    q: "関西では数え方が違うと聞きました。",
+    a: "関西の一部地域には、亡くなった前日から数える（逮夜＝たいやを基準にする）風習があり、その場合は法要の日取りが1日早くなります。地域やお寺のならわしによって異なるため、菩提寺や葬儀社に確認するのが確実です。",
+  },
+  {
+    q: "友引や仏滅など六曜は気にしたほうがよいですか？",
+    a: "六曜はもともと仏教とは関係がなく、法要の日取りで六曜を避ける必要はないとされるのが一般的です。「友引に葬儀を避ける」風習は火葬場の休業日と重なることが多いため残っていますが、四十九日などの法要には当てはまりません。",
+  },
+  {
+    q: "一周忌や三回忌はいつですか？",
+    a: "一周忌は亡くなった翌年の祥月命日（同じ月日）、三回忌は満2年目の祥月命日です。回忌は「数え」で数えるため、三回忌＝2年後、七回忌＝6年後のように、回忌の数から1を引いた年数後になります。",
+  },
+];
+
+const related = [
+  { href: "/column/shonichi/", label: "コラム: 「初日を含める・含めない」日数の数え方の基本" },
+  { href: "/eigyobi/", label: "営業日計算 — 諸手続きの期日確認に" },
+];
+---
+
+<ToolLayout
+  title="四十九日はいつ？計算ツール — 命日から法要の日程を自動計算"
+  description="命日を入力するだけで、初七日・四十九日・百箇日・一周忌・三回忌などの法要日を一覧表示。四十九日が平日の場合の繰り上げ候補（直前の土日）も表示します。数え方の解説つき。"
+  h1="四十九日・法要日の計算"
+  lead="命日（亡くなった日）を入力すると、初七日から三十三回忌までの法要の日付を一覧で計算します。"
+  faqs={faqs}
+  related={related}
+>
+  <div class="calc" slot="calc">
+    <div class="row">
+      <div>
+        <label for="death-date">命日（亡くなった日）</label>
+        <input type="date" id="death-date" />
+      </div>
+      <button type="button" class="btn" id="calc-btn">計算する</button>
+    </div>
+    <div id="result" aria-live="polite"></div>
+  </div>
+
+  <Fragment slot="explain">
+    <h2>四十九日の数え方</h2>
+    <p>
+      四十九日（しじゅうくにち）は、<strong>命日を1日目として数えて49日目</strong>に営む法要です。仏教では、故人は七日ごとに閻魔大王らの審判を受け、49日目に来世の行き先が定まるとされ、この日をもって忌明け（きあけ）となります。「満中陰（まんちゅういん）」とも呼ばれます。
+    </p>
+    <p>
+      命日を1日目と数えるため、日付の計算上は「命日＋48日」となります。「49日を足す」と1日ずれてしまうので注意してください。初七日（7日目）も同様に「命日＋6日」です。
+    </p>
+    <h2>実際の日取りの決め方</h2>
+    <p>
+      四十九日当日が平日の場合は、参列者が集まりやすい<strong>直前の土日に繰り上げる</strong>のが一般的です。忌明け前に済ませる意味から、当日より後に延ばすことは避けるならわしです。本ツールの結果にも繰り上げ候補の土日を表示しています。
+    </p>
+    <p>
+      なお、地域の風習（関西の一部の逮夜基準など）やお寺の考え方で日取りが変わることがあります。最終的な日程は菩提寺・僧侶・葬儀社と相談して決めてください。
+    </p>
+  </Fragment>
+</ToolLayout>
+
+<script>
+  import { parseYmd, toYmd, formatJa, memorialServices, addDays } from "../lib/dateCore.js";
+  import { himekuriHTML, milestoneTableHTML, shareButtonHTML, bindShareButtons, getParam, setParams } from "../lib/ui.js";
+
+  const $ = (id) => document.getElementById(id);
+  const result = $("result");
+
+  function run() {
+    const v = $("death-date").value;
+    if (!v) return;
+    const death = parseYmd(v);
+    const items = memorialServices(death).map((it) => ({
+      ...it,
+      main: it.label.includes("四十九日"),
+    }));
+    const shijukunichi = items.find((it) => it.main).date;
+
+    // 平日なら直前の土日を繰り上げ候補として表示
+    let kuriage = "";
+    const w = shijukunichi.getDay();
+    if (w >= 1 && w <= 5) {
+      const sun = addDays(shijukunichi, -w);
+      const sat = addDays(sun, -1);
+      kuriage = `<p class="result-note">四十九日当日は平日です。繰り上げて営む場合の直前の週末は ${formatJa(sat)}・${formatJa(sun)} です。</p>`;
+    }
+
+    result.innerHTML = `
+      <p class="result-caption">四十九日（忌明け）は</p>
+      ${himekuriHTML(shijukunichi)}
+      ${kuriage}
+      ${milestoneTableHTML(items, { firstColLabel: "法要" })}
+      ${shareButtonHTML()}
+      <p class="result-note">命日を1日目として計算しています。地域・宗派のならわしにより日取りが異なる場合があります。</p>`;
+    bindShareButtons(result);
+    setParams({ d: toYmd(death) });
+  }
+
+  $("calc-btn").addEventListener("click", run);
+  const p = getParam("d");
+  if (p) {
+    $("death-date").value = p;
+    run();
+  }
+</script>

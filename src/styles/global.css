@@ -1,0 +1,257 @@
+/* ============================================================
+   ひづけ堂 デザイントークン
+   モチーフ: 日めくりカレンダーと帳面。藍(あい)×紙白×墨。
+   喪事のページでも違和感のない、静かで信頼感のあるトーン。
+   ============================================================ */
+:root {
+  --paper: #faf9f5;        /* 背景: わずかに温かい紙白 */
+  --ink: #23272e;          /* 本文: 墨色 */
+  --ai: #2b5876;           /* 主要色: 藍 */
+  --ai-deep: #1e415a;      /* 藍の濃色（ホバー等） */
+  --ai-pale: #edf2f6;      /* 藍の淡色背景 */
+  --muted: #6b7076;        /* 補足テキスト */
+  --line: #e3e1d9;         /* 罫線 */
+  --aka: #a3453a;          /* 祝日・日曜のしるし（控えめな朱） */
+  --radius: 6px;
+
+  --font-body: "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Yu Gothic",
+    "Noto Sans JP", Meiryo, system-ui, sans-serif;
+  --font-display: "Hiragino Mincho ProN", "Yu Mincho", "Noto Serif JP",
+    "BIZ UDMincho", serif;
+}
+
+* { box-sizing: border-box; }
+html { font-size: 16px; }
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body);
+  line-height: 1.9;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ---------- レイアウト ---------- */
+.wrap { max-width: 42rem; margin: 0 auto; padding: 0 1.25rem; }
+
+.site-header {
+  border-bottom: 1px solid var(--line);
+  padding: 1.1rem 0;
+}
+.site-header .wrap { display: flex; align-items: baseline; gap: 0.9rem; flex-wrap: wrap; }
+.site-name {
+  font-family: var(--font-display);
+  font-size: 1.45rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  color: var(--ink);
+  text-decoration: none;
+}
+.site-name:hover { color: var(--ai); }
+.site-tagline { color: var(--muted); font-size: 0.82rem; letter-spacing: 0.05em; }
+
+main { padding: 2.2rem 0 3.5rem; }
+
+.site-footer {
+  border-top: 1px solid var(--line);
+  padding: 1.8rem 0 2.4rem;
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+.site-footer nav { display: flex; gap: 1.2rem; flex-wrap: wrap; margin-bottom: 0.8rem; }
+.site-footer a { color: var(--muted); }
+
+/* ---------- タイポグラフィ ---------- */
+h1 {
+  font-family: var(--font-display);
+  font-size: 1.7rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  line-height: 1.5;
+  margin: 0 0 0.4rem;
+}
+h2 {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  margin: 2.6rem 0 0.8rem;
+  padding-left: 0.7rem;
+  border-left: 3px solid var(--ai);
+}
+h3 { font-size: 1rem; margin: 1.6rem 0 0.4rem; }
+p { margin: 0.7rem 0; }
+a { color: var(--ai); }
+a:hover { color: var(--ai-deep); }
+.lead { color: var(--muted); font-size: 0.95rem; margin-bottom: 1.6rem; }
+small, .small { font-size: 0.82rem; color: var(--muted); }
+
+/* ---------- 計算フォーム ---------- */
+.calc {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 1.4rem 1.4rem 1.6rem;
+  margin: 1.2rem 0 1.8rem;
+}
+.calc .row { display: flex; gap: 0.9rem; flex-wrap: wrap; align-items: flex-end; margin-bottom: 0.9rem; }
+.calc label { display: block; font-size: 0.82rem; color: var(--muted); margin-bottom: 0.25rem; }
+.calc input[type="date"], .calc input[type="number"], .calc select {
+  font: inherit;
+  padding: 0.5rem 0.6rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--paper);
+  color: var(--ink);
+  min-height: 2.7rem;
+}
+.calc input:focus-visible, .calc select:focus-visible, .calc button:focus-visible,
+a:focus-visible, summary:focus-visible {
+  outline: 2px solid var(--ai);
+  outline-offset: 2px;
+}
+.calc .radio-group { display: flex; gap: 1.1rem; flex-wrap: wrap; font-size: 0.9rem; }
+.calc .radio-group label { display: flex; align-items: center; gap: 0.35rem; color: var(--ink); font-size: 0.9rem; margin: 0; }
+.btn {
+  font: inherit;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: #fff;
+  background: var(--ai);
+  border: none;
+  border-radius: var(--radius);
+  padding: 0.6rem 1.6rem;
+  min-height: 2.7rem;
+  cursor: pointer;
+}
+.btn:hover { background: var(--ai-deep); }
+.btn-ghost {
+  font: inherit; font-size: 0.82rem;
+  color: var(--ai); background: none;
+  border: 1px solid var(--line); border-radius: var(--radius);
+  padding: 0.35rem 0.9rem; cursor: pointer;
+}
+.btn-ghost:hover { border-color: var(--ai); }
+
+/* ---------- シグネチャ: 日めくり結果カード ---------- */
+.himekuri {
+  max-width: 17rem;
+  margin: 1.4rem auto 0.6rem;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(35, 39, 46, 0.07);
+  text-align: center;
+}
+.himekuri-band {
+  background: var(--ai);
+  color: #fff;
+  font-size: 0.85rem;
+  letter-spacing: 0.35em;
+  padding: 0.35rem 0 0.3rem 0.35em;
+}
+.himekuri-band.is-red { background: var(--aka); }
+.himekuri-ym { color: var(--muted); font-size: 0.85rem; margin-top: 0.8rem; letter-spacing: 0.1em; }
+.himekuri-day {
+  font-family: var(--font-display);
+  font-size: 4.2rem;
+  font-weight: 600;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+.himekuri-day.is-red { color: var(--aka); }
+.himekuri-wareki { color: var(--muted); font-size: 0.85rem; letter-spacing: 0.1em; padding-bottom: 0.4rem; }
+.himekuri-note {
+  border-top: 1px dashed var(--line);
+  font-size: 0.82rem;
+  color: var(--aka);
+  padding: 0.4rem 0.6rem;
+}
+.result-caption { text-align: center; font-size: 0.9rem; margin-top: 0.6rem; }
+.result-big {
+  text-align: center;
+  font-family: var(--font-display);
+  font-size: 1.9rem;
+  margin: 1rem 0 0.2rem;
+  font-variant-numeric: tabular-nums;
+}
+.result-actions { text-align: center; margin-top: 0.9rem; }
+.result-note { font-size: 0.82rem; color: var(--muted); text-align: center; margin-top: 0.5rem; }
+
+/* ---------- 一覧表（法要・お祝い・節目） ---------- */
+.milestones { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.95rem; }
+.milestones th, .milestones td {
+  text-align: left;
+  padding: 0.55rem 0.5rem;
+  border-bottom: 1px solid var(--line);
+  vertical-align: top;
+}
+.milestones th { font-weight: 600; font-size: 0.82rem; color: var(--muted); }
+.milestones td.date-cell { white-space: nowrap; font-variant-numeric: tabular-nums; }
+.milestones .is-red { color: var(--aka); }
+.milestones .sub { display: block; font-size: 0.8rem; color: var(--muted); }
+.milestones tr.is-main td { background: var(--ai-pale); font-weight: 600; }
+
+/* ---------- 解説・FAQ ---------- */
+.explain { margin-top: 2.4rem; }
+.explain ul { padding-left: 1.3rem; }
+.faq details {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: #fff;
+  margin: 0.6rem 0;
+  padding: 0 1rem;
+}
+.faq summary {
+  cursor: pointer;
+  font-weight: 600;
+  padding: 0.8rem 0;
+  list-style-position: outside;
+}
+.faq .faq-a { padding: 0 0 1rem; margin: 0; }
+
+.note-box {
+  background: var(--ai-pale);
+  border-radius: var(--radius);
+  padding: 0.9rem 1.1rem;
+  font-size: 0.9rem;
+  margin: 1.2rem 0;
+}
+
+/* ---------- ツール一覧（トップ） ---------- */
+.tool-list { list-style: none; padding: 0; margin: 1.4rem 0; display: grid; gap: 0.8rem; }
+.tool-list a {
+  display: block;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 1rem 1.2rem;
+  text-decoration: none;
+  color: var(--ink);
+}
+.tool-list a:hover { border-color: var(--ai); }
+.tool-list .tool-name {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.08rem;
+  color: var(--ai);
+  letter-spacing: 0.04em;
+}
+.tool-list .tool-desc { font-size: 0.85rem; color: var(--muted); margin-top: 0.15rem; }
+
+.related { margin-top: 2.4rem; }
+.related ul { padding-left: 1.3rem; }
+
+@media (max-width: 480px) {
+  h1 { font-size: 1.45rem; }
+  .calc { padding: 1.1rem 1rem 1.3rem; }
+  .calc .row { gap: 0.7rem; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .himekuri { animation: himekuri-in 0.35s ease-out; }
+  @keyframes himekuri-in {
+    from { transform: translateY(-6px); opacity: 0; }
+    to { transform: none; opacity: 1; }
+  }
+}

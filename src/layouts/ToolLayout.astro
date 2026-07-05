@@ -1,0 +1,67 @@
+---
+import Base from "./Base.astro";
+
+// props:
+//   title / description : メタ用
+//   h1 / lead           : 見出しとリード文
+//   faqs                : [{ q, a }]  … FAQ表示とFAQPage構造化データの両方に使う
+//   related             : [{ href, label }]
+const { title, description, h1, lead, faqs = [], related = [] } = Astro.props;
+
+const faqJsonLd =
+  faqs.length > 0
+    ? JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        mainEntity: faqs.map((f) => ({
+          "@type": "Question",
+          name: f.q,
+          acceptedAnswer: { "@type": "Answer", text: f.a },
+        })),
+      })
+    : null;
+---
+
+<Base title={title} description={description}>
+  <article>
+    <h1>{h1}</h1>
+    <p class="lead">{lead}</p>
+
+    <slot name="calc" />
+
+    <div class="explain">
+      <slot name="explain" />
+    </div>
+
+    {
+      faqs.length > 0 && (
+        <section class="faq">
+          <h2>よくある質問</h2>
+          {faqs.map((f) => (
+            <details>
+              <summary>{f.q}</summary>
+              <p class="faq-a" set:html={f.a} />
+            </details>
+          ))}
+        </section>
+      )
+    }
+
+    {
+      related.length > 0 && (
+        <nav class="related">
+          <h2>関連ツール</h2>
+          <ul>
+            {related.map((r) => (
+              <li>
+                <a href={r.href}>{r.label}</a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      )
+    }
+  </article>
+
+  {faqJsonLd && <script type="application/ld+json" is:inline set:html={faqJsonLd} />}
+</Base>

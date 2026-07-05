@@ -1,0 +1,183 @@
+---
+import ToolLayout from "../layouts/ToolLayout.astro";
+
+const faqs = [
+  {
+    q: "「3営業日後」とはいつのことですか？",
+    a: "一般的には、起算日の翌日から数えて3番目の営業日を指します。たとえば金曜日の3営業日後は、月・火・水と数えて水曜日です（当日の金曜日は数えません）。ただし企業によっては当日を1日目と数える場合もあるため、期限に関わるときは相手先に確認するのが確実です。",
+  },
+  {
+    q: "土曜日は営業日に含まれますか？",
+    a: "本ツールでは土曜・日曜・国民の祝日（振替休日・国民の休日を含む）を営業日から除いています。これは官公庁や銀行、多くの企業の一般的な扱いです。土曜営業の店舗・企業とやり取りする場合は、その会社のカレンダーに読み替えてください。",
+  },
+  {
+    q: "銀行の営業日と同じですか？",
+    a: "ほぼ同じです。銀行の窓口営業日も土日祝を除いた平日です。ただし12月31日〜1月3日は銀行休業日なので、年末年始をまたぐ振込などはその分の日数も見込んでください（本ツールは祝日法上の祝日のみを除外しています）。",
+  },
+  {
+    q: "会社独自の休業日（夏季休暇・創立記念日など）は反映されますか？",
+    a: "反映されません。本ツールは土日と国民の祝日のみを除外する一般的な営業日計算です。相手先の会社カレンダーに独自の休業日がある場合は、その日数を加味してください。",
+  },
+];
+
+const related = [
+  { href: "/cooling-off/", label: "クーリングオフ期限計算 — 契約書面の受領日から期限日を計算" },
+  { href: "/column/shonichi/", label: "コラム: 「初日を含める・含めない」日数の数え方の基本" },
+  { href: "/column/shukujitsu/", label: "コラム: 祝日はどうやって決まる？振替休日と国民の休日" },
+];
+---
+
+<ToolLayout
+  title="営業日計算 — ◯営業日後はいつ？土日祝を除いて自動計算"
+  description="「3営業日後はいつ？」を土日・祝日（振替休日含む）を除いて自動計算。2つの日付の間の営業日数も数えられる無料ツール。営業日の数え方も丁寧に解説します。"
+  h1="営業日計算"
+  lead="土日と国民の祝日を除いた「◯営業日後・◯営業日前」の日付と、期間内の営業日数を計算します。"
+  faqs={faqs}
+  related={related}
+>
+  <div class="calc" slot="calc">
+    <div class="row radio-group" role="radiogroup" aria-label="計算モード">
+      <label><input type="radio" name="mode" value="add" checked /> ◯営業日後・前を求める</label>
+      <label><input type="radio" name="mode" value="count" /> 期間内の営業日数を数える</label>
+    </div>
+
+    <div id="pane-add">
+      <div class="row">
+        <div>
+          <label for="base-date">起算日</label>
+          <input type="date" id="base-date" />
+        </div>
+        <div>
+          <label for="n-days">営業日数</label>
+          <input type="number" id="n-days" value="3" min="1" max="365" style="width:5.5rem" />
+        </div>
+        <div>
+          <label for="direction">方向</label>
+          <select id="direction">
+            <option value="1">営業日後</option>
+            <option value="-1">営業日前</option>
+          </select>
+        </div>
+        <button type="button" class="btn" id="calc-add">計算する</button>
+      </div>
+    </div>
+
+    <div id="pane-count" hidden>
+      <div class="row">
+        <div>
+          <label for="from-date">開始日</label>
+          <input type="date" id="from-date" />
+        </div>
+        <div>
+          <label for="to-date">終了日</label>
+          <input type="date" id="to-date" />
+        </div>
+        <div>
+          <label for="include-first">開始日の数え方</label>
+          <select id="include-first">
+            <option value="0">開始日を含めない</option>
+            <option value="1">開始日を含める</option>
+          </select>
+        </div>
+        <button type="button" class="btn" id="calc-count">計算する</button>
+      </div>
+    </div>
+
+    <div id="result" aria-live="polite"></div>
+  </div>
+
+  <Fragment slot="explain">
+    <h2>営業日の数え方</h2>
+    <p>
+      営業日とは、会社や役所が業務を行っている日のことで、一般には<strong>土曜・日曜・国民の祝日を除いた平日</strong>を指します。本ツールもこの一般的な定義で計算しています（祝日には振替休日・国民の休日を含みます）。
+    </p>
+    <p>
+      注意したいのは<strong>当日を数えるかどうか</strong>です。ビジネスの慣行では「3営業日後」「3営業日以内」というとき、依頼した当日は数えず、<strong>翌営業日を1日目</strong>として数えるのが一般的です。金曜日に「3営業日後にお送りします」と言われたら、月曜（1）・火曜（2）・水曜（3）で水曜日が目安になります。
+    </p>
+    <p>
+      ただしこれはあくまで慣行で、法律で統一されているわけではありません。締切や支払期限など重要な日付は、相手先がどちらの数え方をしているか確認するのが確実です。
+    </p>
+    <h2>祝日データについて</h2>
+    <p>
+      本ツールは内閣府が公表している「国民の祝日」の情報（2025年〜2027年分）に基づいて計算しています。それより先の日付では祝日を考慮できないため、結果に注記を表示します。
+    </p>
+  </Fragment>
+</ToolLayout>
+
+<script>
+  import { parseYmd, addBusinessDays, countBusinessDays, formatJa, toYmd, inHolidayRange } from "../lib/dateCore.js";
+  import { himekuriHTML, shareButtonHTML, bindShareButtons, getParam, setParams, todayYmd } from "../lib/ui.js";
+
+  const $ = (id) => document.getElementById(id);
+  const result = $("result");
+
+  // モード切替
+  const panes = { add: $("pane-add"), count: $("pane-count") };
+  document.querySelectorAll('input[name="mode"]').forEach((r) =>
+    r.addEventListener("change", () => {
+      const mode = document.querySelector('input[name="mode"]:checked').value;
+      panes.add.hidden = mode !== "add";
+      panes.count.hidden = mode !== "count";
+      result.innerHTML = "";
+    })
+  );
+
+  function rangeNote(...dates) {
+    return dates.every((d) => inHolidayRange(d))
+      ? ""
+      : `<p class="result-note">※ 祝日データの範囲（2025〜2027年）外の日付を含むため、範囲外の祝日は考慮されていません。</p>`;
+  }
+
+  function runAdd() {
+    const base = parseYmd($("base-date").value);
+    const n = Number($("n-days").value) * Number($("direction").value);
+    if (!$("base-date").value || !Number.isFinite(n) || n === 0) return;
+    const dest = addBusinessDays(base, n);
+    result.innerHTML = `
+      <p class="result-caption">${formatJa(base)} の ${Math.abs(n)}営業日${n > 0 ? "後" : "前"}は</p>
+      ${himekuriHTML(dest)}
+      ${shareButtonHTML()}
+      ${rangeNote(base, dest)}
+      <p class="result-note">起算日の当日は数えず、翌営業日を1日目としています。</p>`;
+    bindShareButtons(result);
+    setParams({ mode: "add", d: toYmd(base), n: $("n-days").value, dir: $("direction").value });
+  }
+
+  function runCount() {
+    if (!$("from-date").value || !$("to-date").value) return;
+    const from = parseYmd($("from-date").value);
+    const to = parseYmd($("to-date").value);
+    if (to < from) {
+      result.innerHTML = `<p class="result-note">終了日は開始日以降の日付を選んでください。</p>`;
+      return;
+    }
+    const inc = $("include-first").value === "1";
+    const days = countBusinessDays(from, to, inc);
+    result.innerHTML = `
+      <div class="result-big">${days}営業日</div>
+      <p class="result-caption">${formatJa(from)} 〜 ${formatJa(to)}（開始日を${inc ? "含める" : "含めない"}）</p>
+      ${shareButtonHTML()}
+      ${rangeNote(from, to)}`;
+    bindShareButtons(result);
+    setParams({ mode: "count", from: toYmd(from), to: toYmd(to), inc: inc ? "1" : "0" });
+  }
+
+  $("calc-add").addEventListener("click", runAdd);
+  $("calc-count").addEventListener("click", runCount);
+
+  // 初期値: 今日（URLパラメータがあれば復元して自動計算）
+  $("base-date").value = getParam("d") || todayYmd();
+  $("from-date").value = getParam("from") || todayYmd();
+  $("to-date").value = getParam("to") || todayYmd();
+  if (getParam("mode") === "count") {
+    document.querySelector('input[name="mode"][value="count"]').checked = true;
+    panes.add.hidden = true;
+    panes.count.hidden = false;
+    if ($("include-first")) $("include-first").value = getParam("inc") === "1" ? "1" : "0";
+    if (getParam("from") && getParam("to")) runCount();
+  } else {
+    if (getParam("n")) $("n-days").value = getParam("n");
+    if (getParam("dir")) $("direction").value = getParam("dir");
+    if (getParam("d")) runAdd();
+  }
+</script>

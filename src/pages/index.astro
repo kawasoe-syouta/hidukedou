@@ -1,0 +1,78 @@
+---
+import Base from "../layouts/Base.astro";
+import { SITE } from "../lib/site.js";
+
+const tools = [
+  {
+    href: "/eigyobi/",
+    name: "営業日計算",
+    desc: "「3営業日後はいつ？」を土日祝を除いて計算。期間内の営業日数も数えられます。",
+  },
+  {
+    href: "/shijukunichi/",
+    name: "四十九日・法要日の計算",
+    desc: "命日から初七日・四十九日・一周忌〜三十三回忌までの日程を一覧表示します。",
+  },
+  {
+    href: "/seigo/",
+    name: "生後日数・お祝い日の計算",
+    desc: "今日で生後何日・何か月？お七夜・お宮参り・百日祝いの日付も自動計算。",
+  },
+  {
+    href: "/cooling-off/",
+    name: "クーリングオフ期限の計算",
+    desc: "書面の受領日と取引の種類から、クーリングオフの期限日を計算します。",
+  },
+  {
+    href: "/kinenbi/",
+    name: "記念日カウンター",
+    desc: "付き合って今日で何日目？100日・1000日・◯周年の節目も一覧表示。",
+  },
+];
+
+const columns = [
+  { href: "/column/shonichi/", name: "「初日を含める・含めない」— 日数の数え方の基本" },
+  { href: "/column/shukujitsu/", name: "祝日はどうやって決まる？振替休日と国民の休日のしくみ" },
+];
+
+const jsonLd = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: SITE.name,
+  description: SITE.description,
+});
+---
+
+<Base>
+  <h1>暮らしの日付を、正しく数える</h1>
+  <p class="lead">
+    {SITE.name}は、四十九日・営業日・生後日数など、暮らしのなかで出会う「この日っていつ？」を計算する無料ツール集です。日付の計算は<strong>初日を含めるかどうか</strong>で答えが1日変わります。各ツールでは計算結果だけでなく、その数え方の根拠まで丁寧に説明します。
+  </p>
+
+  <h2>ツール一覧</h2>
+  <ul class="tool-list">
+    {
+      tools.map((t) => (
+        <li>
+          <a href={t.href}>
+            <span class="tool-name">{t.name}</span>
+            <span class="tool-desc">{t.desc}</span>
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+
+  <h2>日付の数え方を知る</h2>
+  <ul>
+    {
+      columns.map((c) => (
+        <li>
+          <a href={c.href}>{c.name}</a>
+        </li>
+      ))
+    }
+  </ul>
+
+  <script type="application/ld+json" is:inline set:html={jsonLd} />
+</Base>

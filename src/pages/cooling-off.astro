@@ -1,0 +1,117 @@
+---
+import ToolLayout from "../layouts/ToolLayout.astro";
+
+const faqs = [
+  {
+    q: "クーリングオフの「8日間」はいつから数えますか？",
+    a: "申込書面または契約書面（法定の記載事項を満たしたもの）を受け取った日を1日目として数えます。たとえば7月1日に書面を受け取った訪問販売なら、期限は7月8日です。初日を含めて数える点に注意してください。",
+  },
+  {
+    q: "期限の最終日に通知を出しても間に合いますか？",
+    a: "はがき等の書面で通知する場合は、期間内に発信すれば有効（発信主義）とされています。最終日の消印が期間内であれば効力が生じます。証拠を残すため、はがきの両面をコピーし、特定記録郵便や簡易書留で送るのが一般的なやり方です。2022年6月からは電子メール等の電磁的記録による通知も可能になりました。",
+  },
+  {
+    q: "書面を受け取っていない・記載に不備がある場合は？",
+    a: "法定の記載事項を満たした書面が交付されていない場合、クーリングオフ期間は進行しないと解されており、8日（20日）を過ぎていても行使できる可能性があります。あきらめる前に消費生活センター（電話番号188）に相談してください。",
+  },
+  {
+    q: "ネット通販で買ったものはクーリングオフできますか？",
+    a: "通信販売にはクーリングオフ制度はありません。代わりに、事業者が定める返品特約に従います。返品特約の表示がない場合は、商品到着から8日以内であれば送料自己負担で返品（契約解除）できるとされています。",
+  },
+];
+
+const related = [
+  { href: "/eigyobi/", label: "営業日計算 — 手続きの期日確認に" },
+  { href: "/column/shonichi/", label: "コラム: 「初日を含める・含めない」日数の数え方の基本" },
+];
+---
+
+<ToolLayout
+  title="クーリングオフ期限計算 — 8日間はいつまで？受領日から自動計算"
+  description="クーリングオフの期限日を、契約書面の受領日と取引の種類（訪問販売・電話勧誘・マルチ商法など）から自動計算。初日を含める数え方や、はがきの出し方・消印有効の扱いも解説します。"
+  h1="クーリングオフ期限の計算"
+  lead="申込書面・契約書面を受け取った日と取引の種類を選ぶと、クーリングオフができる期限日を計算します。"
+  faqs={faqs}
+  related={related}
+>
+  <div class="calc" slot="calc">
+    <div class="row">
+      <div>
+        <label for="receipt-date">書面を受け取った日</label>
+        <input type="date" id="receipt-date" />
+      </div>
+      <div>
+        <label for="deal-type">取引の種類</label>
+        <select id="deal-type">
+          <option value="8">訪問販売（8日間）</option>
+          <option value="8">電話勧誘販売（8日間）</option>
+          <option value="8">特定継続的役務提供・エステや塾など（8日間）</option>
+          <option value="8">訪問購入・出張買取など（8日間）</option>
+          <option value="20">連鎖販売取引・マルチ商法（20日間）</option>
+          <option value="20">業務提供誘引販売取引・内職商法など（20日間）</option>
+        </select>
+      </div>
+      <button type="button" class="btn" id="calc-btn">計算する</button>
+    </div>
+    <div id="result" aria-live="polite"></div>
+  </div>
+
+  <Fragment slot="explain">
+    <div class="note-box">
+      本ページは一般的な制度の紹介であり、法的助言ではありません。個別のケースでクーリングオフできるかどうかの判断は、<strong>消費者ホットライン「188（いやや）」</strong>で最寄りの消費生活センターに相談してください。
+    </div>
+    <h2>クーリングオフの数え方 — 初日を含めます</h2>
+    <p>
+      クーリングオフの期間は、特定商取引法に基づき、法定の記載事項を満たした申込書面または契約書面を<strong>受け取った日を1日目</strong>として数えます。日数の計算では多くの場面で「初日不算入」が原則ですが、クーリングオフは<strong>初日算入</strong>である点が間違えやすいポイントです。
+    </p>
+    <p>
+      たとえば訪問販売（8日間）で7月1日に書面を受け取った場合、期限日は7月8日です。「受領日＋8日」と計算すると1日遅く見積もってしまうので注意してください。
+    </p>
+    <h2>通知のしかた</h2>
+    <p>
+      期間内に「契約を解除する」旨を書面または電磁的記録で発信すれば、通知が事業者に届くのが期間後でも有効です（発信主義）。はがきで出す場合は、両面のコピーを保管し、特定記録郵便や簡易書留など記録の残る方法で送るのが確実です。クレジット契約を結んだ場合は、販売会社とクレジット会社の両方に通知します。
+    </p>
+    <h2>期限を過ぎていても</h2>
+    <p>
+      書面が交付されていない、記載に不備がある、事業者に妨害された、といった場合には期間経過後でもクーリングオフが認められることがあります。自己判断であきらめず、消費生活センターに相談してください。
+    </p>
+  </Fragment>
+</ToolLayout>
+
+<script>
+  import { parseYmd, toYmd, formatJa, coolingOffDeadline } from "../lib/dateCore.js";
+  import { himekuriHTML, shareButtonHTML, bindShareButtons, getParam, setParams } from "../lib/ui.js";
+
+  const $ = (id) => document.getElementById(id);
+  const result = $("result");
+
+  function run() {
+    const v = $("receipt-date").value;
+    if (!v) return;
+    const receipt = parseYmd(v);
+    const sel = $("deal-type");
+    const days = Number(sel.value);
+    const label = sel.options[sel.selectedIndex].text;
+    const deadline = coolingOffDeadline(receipt, days);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const passed = deadline < today;
+    result.innerHTML = `
+      <p class="result-caption">${label.replace(/（.*/, "")}のクーリングオフ期限は</p>
+      ${himekuriHTML(deadline)}
+      <p class="result-caption"><strong>${formatJa(deadline)} まで</strong>（受領日を1日目として${days}日間）</p>
+      ${passed ? `<p class="result-note">期限日を過ぎていますが、書面不交付・記載不備などの場合は行使できることがあります。消費者ホットライン188へ相談を。</p>` : `<p class="result-note">この日の消印まで有効です（書面で発信する場合）。</p>`}
+      ${shareButtonHTML()}`;
+    bindShareButtons(result);
+    setParams({ d: toYmd(receipt), t: String(sel.selectedIndex) });
+  }
+
+  $("calc-btn").addEventListener("click", run);
+  const p = getParam("d");
+  if (p) {
+    $("receipt-date").value = p;
+    const t = Number(getParam("t"));
+    if (Number.isInteger(t) && t >= 0 && t < $("deal-type").options.length) $("deal-type").selectedIndex = t;
+    run();
+  }
+</script>

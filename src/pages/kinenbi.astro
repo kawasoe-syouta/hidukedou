@@ -1,0 +1,100 @@
+---
+import ToolLayout from "../layouts/ToolLayout.astro";
+
+const faqs = [
+  {
+    q: "「付き合って100日」はいつですか？",
+    a: "付き合いはじめた日を1日目として数えて100日目とするのが一般的です。日付の計算では「開始日＋99日」になります。たとえば1月1日に付き合いはじめたら、100日目は4月10日です。",
+  },
+  {
+    q: "「今日で何日目」と「何日経った」は違いますか？",
+    a: "1日ずれます。「何日目」は開始日を1日目と数えるので、開始日当日が1日目です。「何日経った（経過日数）」は開始日を0日と数えるので、開始日当日は0日です。本ツールは記念日の慣例にあわせて「何日目」で表示しています。",
+  },
+  {
+    q: "1周年は365日目と同じ日ですか？",
+    a: "うるう年をまたがない場合、1周年（翌年の同じ日）は366日目にあたり、365日目の翌日です。「365日記念」と「1周年」を同じ日と思っていると1日ずれるので、本ツールでは両方を一覧に表示しています。",
+  },
+];
+
+const related = [
+  { href: "/seigo/", label: "生後日数計算 — 赤ちゃんの日数・お祝い行事はこちら" },
+  { href: "/column/shonichi/", label: "コラム: 「初日を含める・含めない」日数の数え方の基本" },
+];
+---
+
+<ToolLayout
+  title="記念日カウンター — 付き合って今日で何日？100日・1000日記念日を計算"
+  description="付き合った日・結婚した日・推しに出会った日から、今日で何日目かを計算。100日・365日・1000日・◯周年などの節目の日付も一覧表示。結果はURLでシェアできます。"
+  h1="記念日カウンター"
+  lead="はじまりの日を入力すると、今日で何日目かと、100日目・1000日目・◯周年などの節目の日付を計算します。"
+  faqs={faqs}
+  related={related}
+>
+  <div class="calc" slot="calc">
+    <div class="row">
+      <div>
+        <label for="start-date">はじまりの日（付き合った日・結婚した日など）</label>
+        <input type="date" id="start-date" />
+      </div>
+      <button type="button" class="btn" id="calc-btn">計算する</button>
+    </div>
+    <div id="result" aria-live="polite"></div>
+  </div>
+
+  <Fragment slot="explain">
+    <h2>記念日の数え方</h2>
+    <p>
+      「付き合って◯日」のような記念日は、<strong>はじまりの日を1日目</strong>として数えるのが一般的です。開始日当日が1日目なので、100日目は「開始日＋99日」になります。
+    </p>
+    <p>
+      一方で「◯周年」は暦の上で同じ月日を迎える日です。1年は365日（うるう年は366日）なので、「365日目」と「1周年」は同じ日にならないことがあります。節目をお祝いするときは、どちらの数え方の日なのかを意識しておくとずれがありません。
+    </p>
+    <h2>こんな使い方も</h2>
+    <ul>
+      <li>結婚記念日までの残り日数の確認や、銀婚式・金婚式などの長期の節目の計算</li>
+      <li>推しのデビュー日・グループ結成日からの日数カウント</li>
+      <li>禁煙・貯金・継続チャレンジの「今日で何日目」の確認</li>
+    </ul>
+    <p class="small">結果画面のURLには日付が含まれます。「結果のURLをコピー」からSNSや共有メモにそのまま貼り付けられます。</p>
+  </Fragment>
+</ToolLayout>
+
+<script>
+  import { parseYmd, toYmd, diffDays, anniversaryMilestones, formatJa } from "../lib/dateCore.js";
+  import { milestoneTableHTML, shareButtonHTML, bindShareButtons, getParam, setParams } from "../lib/ui.js";
+
+  const $ = (id) => document.getElementById(id);
+  const result = $("result");
+
+  function run() {
+    const v = $("start-date").value;
+    if (!v) return;
+    const start = parseYmd(v);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const items = anniversaryMilestones(start).map((it) => ({
+      ...it,
+      sub: it.date < today ? "済" : undefined,
+    }));
+    let head = "";
+    if (start <= today) {
+      const nth = diffDays(start, today, true);
+      head = `<div class="result-big">今日で ${nth}日目</div>
+        <p class="result-caption">${formatJa(start)} から（開始日を1日目として）</p>`;
+    } else {
+      const until = diffDays(today, start, false);
+      head = `<div class="result-big">はじまりまで あと${until}日</div>
+        <p class="result-caption">${formatJa(start)} 予定</p>`;
+    }
+    result.innerHTML = `${head}${milestoneTableHTML(items, { firstColLabel: "節目" })}${shareButtonHTML()}`;
+    bindShareButtons(result);
+    setParams({ d: toYmd(start) });
+  }
+
+  $("calc-btn").addEventListener("click", run);
+  const p = getParam("d");
+  if (p) {
+    $("start-date").value = p;
+    run();
+  }
+</script>
