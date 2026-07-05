@@ -4,9 +4,10 @@ import Base from "./Base.astro";
 // props:
 //   title / description : メタ用
 //   h1 / lead           : 見出しとリード文
+//   keyPoints           : [string(HTML可)] … 冒頭の要点ボックス
 //   faqs                : [{ q, a }]  … FAQ表示とFAQPage構造化データの両方に使う
 //   related             : [{ href, label }]
-const { title, description, h1, lead, faqs = [], related = [] } = Astro.props;
+const { title, description, h1, lead, keyPoints = [], faqs = [], related = [] } = Astro.props;
 
 const faqJsonLd =
   faqs.length > 0
@@ -28,6 +29,19 @@ const faqJsonLd =
     <p class="lead">{lead}</p>
 
     <slot name="calc" />
+
+    {
+      keyPoints.length > 0 && (
+        <aside class="key-points">
+          <span class="key-points-title">このページの要点</span>
+          <ul>
+            {keyPoints.map((k) => (
+              <li set:html={k} />
+            ))}
+          </ul>
+        </aside>
+      )
+    }
 
     <div class="explain">
       <slot name="explain" />

@@ -12,6 +12,8 @@
   --muted: #6b7076;        /* 補足テキスト */
   --line: #e3e1d9;         /* 罫線 */
   --aka: #a3453a;          /* 祝日・日曜のしるし（控えめな朱） */
+  --ink-soft: #3a3f47;     /* 長文本文: 墨よりわずかに柔らかく */
+  --marker: #dbe7f1;       /* 重要語のマーカー下地 */
   --radius: 6px;
 
   --font-body: "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Yu Gothic",
@@ -25,7 +27,7 @@ html { font-size: 16px; }
 body {
   margin: 0;
   background: var(--paper);
-  color: var(--ink);
+  color: var(--ink-soft);
   font-family: var(--font-body);
   line-height: 1.9;
   -webkit-font-smoothing: antialiased;
@@ -69,6 +71,7 @@ h1 {
   letter-spacing: 0.06em;
   line-height: 1.5;
   margin: 0 0 0.4rem;
+  color: var(--ink);
 }
 h2 {
   font-family: var(--font-display);
@@ -78,13 +81,42 @@ h2 {
   margin: 2.6rem 0 0.8rem;
   padding-left: 0.7rem;
   border-left: 3px solid var(--ai);
+  color: var(--ink);
 }
-h3 { font-size: 1rem; margin: 1.6rem 0 0.4rem; }
-p { margin: 0.7rem 0; }
+h3 { font-size: 1rem; margin: 1.6rem 0 0.4rem; color: var(--ink); }
+p { margin: 1.1rem 0; }
 a { color: var(--ai); }
 a:hover { color: var(--ai-deep); }
 .lead { color: var(--muted); font-size: 0.95rem; margin-bottom: 1.6rem; }
 small, .small { font-size: 0.82rem; color: var(--muted); }
+
+/* 本文中の重要語: 藍のマーカー下地で視線の止まり場所をつくる */
+article strong {
+  color: var(--ai-deep);
+  background: linear-gradient(transparent 62%, var(--marker) 62%);
+  padding: 0 0.1em;
+}
+.note-box strong, .key-points strong { background: none; padding: 0; }
+article li { margin: 0.35rem 0; }
+
+/* ---------- 要点ボックス（記事冒頭のまとめ） ---------- */
+.key-points {
+  background: var(--ai-pale);
+  border-left: 3px solid var(--ai);
+  border-radius: var(--radius);
+  padding: 0.9rem 1.2rem 1rem;
+  margin: 1.4rem 0;
+  font-size: 0.92rem;
+}
+.key-points-title {
+  display: block;
+  font-weight: 600;
+  font-size: 0.8rem;
+  letter-spacing: 0.12em;
+  color: var(--ai-deep);
+  margin-bottom: 0.35rem;
+}
+.key-points ul { margin: 0; padding-left: 1.2rem; }
 
 /* ---------- 計算フォーム ---------- */
 .calc {

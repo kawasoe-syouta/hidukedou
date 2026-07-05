@@ -20,6 +20,12 @@ const faqs = [
   },
 ];
 
+const keyPoints = [
+  "「◯日目」は<strong>はじまりの日を1日目</strong>と数える（100日目＝開始日＋99日）",
+  "「365日目」と「1周年」は<strong>同じ日ではない</strong>（1周年は366日目）",
+  "結果はURLに保存されるので、そのままシェア・ブックマークできる",
+];
+
 const related = [
   { href: "/seigo/", label: "生後日数計算 — 赤ちゃんの日数・お祝い行事はこちら" },
   { href: "/column/uruudoshi/", label: "コラム: うるう年のしくみ — 周年と日数のずれの理由" },
@@ -32,6 +38,7 @@ const related = [
   description="付き合った日・結婚した日・推しに出会った日から、今日で何日目かを計算。100日・365日・1000日・◯周年などの節目の日付も一覧表示。結果はURLでシェアできます。"
   h1="記念日カウンター"
   lead="はじまりの日を入力すると、今日で何日目かと、100日目・1000日目・◯周年などの節目の日付を計算します。"
+  keyPoints={keyPoints}
   faqs={faqs}
   related={related}
 >
@@ -63,8 +70,22 @@ const related = [
       <tr><td>10000日目</td><td class="date-cell">約27年4か月後</td><td>銀婚式を過ぎた頃。夫婦の記念に</td></tr>
     </table>
     <h2>結婚記念日には名前があります</h2>
+    <p>結婚記念日は年数ごとに呼び名があり、名前にちなんだ贈り物をする習慣があります。</p>
+    <table class="milestones">
+      <tr><th>年数</th><th>呼び名</th></tr>
+      <tr><td class="date-cell">1年</td><td>紙婚式</td></tr>
+      <tr><td class="date-cell">5年</td><td>木婚式</td></tr>
+      <tr><td class="date-cell">10年</td><td>錫婚式・アルミ婚式</td></tr>
+      <tr><td class="date-cell">15年</td><td>水晶婚式</td></tr>
+      <tr><td class="date-cell">20年</td><td>磁器婚式</td></tr>
+      <tr class="is-main"><td class="date-cell">25年</td><td>銀婚式</td></tr>
+      <tr><td class="date-cell">30年</td><td>真珠婚式</td></tr>
+      <tr><td class="date-cell">40年</td><td>ルビー婚式</td></tr>
+      <tr class="is-main"><td class="date-cell">50年</td><td>金婚式</td></tr>
+      <tr><td class="date-cell">60年</td><td>ダイヤモンド婚式</td></tr>
+    </table>
     <p>
-      結婚記念日は年数ごとに呼び名があり、名前にちなんだ贈り物をする習慣があります。紙婚式（1年）、木婚式（5年）、錫婚式・アルミ婚式（10年）、水晶婚式（15年）、磁器婚式（20年）、<strong>銀婚式（25年）</strong>、真珠婚式（30年）、ルビー婚式（40年）、<strong>金婚式（50年）</strong>、ダイヤモンド婚式（60年）などが代表的です。年月が経つほど硬く価値のあるものになっていくのは、夫婦の絆が強くなっていくことの表れとされています。本ツールで結婚した日を入力すれば、周年の日付を一覧で確認できます。
+      年月が経つほど硬く価値のあるものになっていくのは、夫婦の絆が強くなっていくことの表れとされています。本ツールで結婚した日を入力すれば、周年の日付を一覧で確認できます。
     </p>
     <h2>こんな使い方も</h2>
     <ul>
