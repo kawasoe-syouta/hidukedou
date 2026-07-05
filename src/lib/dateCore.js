@@ -194,6 +194,38 @@ export function babyEvents(birthDate) {
   ];
 }
 
+/** 早生まれ（1月1日〜4月1日生まれ）かどうか */
+export function isHayaumare(birthDate) {
+  const m = birthDate.getMonth() + 1;
+  const d = birthDate.getDate();
+  return m < 4 || (m === 4 && d === 1);
+}
+
+/**
+ * 小学校入学年（西暦）。学年は「4月2日生まれ〜翌年4月1日生まれ」で区切られる。
+ * 年齢計算に関する法律により誕生日の前日に加齢するため、4月1日生まれは
+ * 3月31日に満6歳となり、1学年上（早生まれ側）に入る。
+ */
+export function elementaryEntranceYear(birthDate) {
+  return birthDate.getFullYear() + (isHayaumare(birthDate) ? 6 : 7);
+}
+
+/**
+ * 学歴早見（幼稚園〜大学の入学・卒業年）。浪人・留年なしのストレート進学の場合。
+ * enter / graduate は西暦年。入学（入園）は4月、卒業（卒園）は3月。
+ */
+export function schoolMilestones(birthDate) {
+  const e = elementaryEntranceYear(birthDate);
+  return [
+    { key: "kindergarten", label: "幼稚園（3年保育）", enter: e - 3, graduate: e },
+    { key: "elementary", label: "小学校", enter: e, graduate: e + 6 },
+    { key: "junior", label: "中学校", enter: e + 6, graduate: e + 9 },
+    { key: "high", label: "高等学校", enter: e + 9, graduate: e + 12 },
+    { key: "college2", label: "短大・専門学校（2年制）", enter: e + 12, graduate: e + 14 },
+    { key: "university", label: "大学（4年制）", enter: e + 12, graduate: e + 16 },
+  ];
+}
+
 /** クーリングオフ期限（書面等の受領日を1日目として dayCount 日間） */
 export function coolingOffDeadline(receiptDate, dayCount) {
   return nthDayCountingFirst(receiptDate, dayCount);

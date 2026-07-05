@@ -1,0 +1,164 @@
+---
+import ToolLayout from "../layouts/ToolLayout.astro";
+
+const faqs = [
+  {
+    q: "なぜ4月1日生まれは1学年上（早生まれ）になるのですか？",
+    a: "法律上、年齢は誕生日の前日が終わる瞬間（前日の24時）に1つ加わります（年齢計算に関する法律）。4月1日生まれの人は3月31日に満6歳となるため、学校教育法の「満6歳に達した日の翌日以後における最初の学年」がその年の4月になり、4月2日生まれの人より1年早く入学します。学年の区切りが「4月1日生まれまで」と「4月2日生まれから」になるのはこのためです。",
+  },
+  {
+    q: "早生まれとは何月何日生まれの人を指しますか？",
+    a: "1月1日から4月1日までに生まれた人を指します。同じ年に生まれた4月2日以降の人より1学年上になる（＝早く入学する）ことから「早生まれ」と呼ばれます。本ツールは早生まれを自動判定して学年を計算します。",
+  },
+  {
+    q: "履歴書の学歴は西暦と和暦のどちらで書くべきですか？",
+    a: "どちらでも構いませんが、履歴書全体（生年月日・学歴・職歴・資格）で表記を統一するのがマナーです。西暦と和暦が混在しないよう注意してください。本ツールは両方を併記しているので、どちらの形式でもそのまま転記できます。",
+  },
+  {
+    q: "浪人・留年・休学した場合はどう読み替えますか？",
+    a: "本ツールの結果は浪人・留年なしでストレートに進学した場合の年です。浪人した場合は大学入学以降にその年数を、留年・休学した場合は該当校の卒業以降にその年数を足してください。",
+  },
+  {
+    q: "幼稚園の入園年は何を基準にしていますか？",
+    a: "3年保育（年少・年中・年長）の場合の入園年を表示しています。2年保育の場合は表示の1年後、保育園の場合は入園時期がさまざまなので、卒園年（小学校入学の直前の3月）だけを参考にしてください。",
+  },
+  {
+    q: "2月29日（うるう年）生まれの学年はどうなりますか？",
+    a: "2月29日生まれは早生まれ（1月1日〜4月1日）に含まれるので、同じ年の4月2日以降生まれの人より1学年上になります。年齢は法律上、毎年2月28日が終わる瞬間に1つ加わるため、誕生日がない年でも学年や入学時期に影響はありません。詳しくは<a href='/column/uruudoshi/'>うるう年のコラム</a>で解説しています。",
+  },
+];
+
+const related = [
+  { href: "/seigo/", label: "生後日数・お祝い日の計算 — 赤ちゃんの月齢とお祝い行事" },
+  { href: "/kinenbi/", label: "記念日カウンター — 100日目・◯周年などの節目を計算" },
+  { href: "/column/uruudoshi/", label: "コラム: うるう年のしくみ — 2月29日生まれの誕生日と年齢" },
+];
+---
+
+<ToolLayout
+  title="入学・卒業年の計算（学歴早見表） — 生年月日から自動計算"
+  description="生年月日を入力するだけで、小学校・中学校・高校・大学の入学年・卒業年を西暦・和暦で一覧表示。履歴書の学歴欄の記入に便利。早生まれ（4月1日生まれまで）も自動判定します。"
+  h1="入学・卒業年の計算（学歴早見表）"
+  lead="生年月日を入力すると、小学校から大学までの入学・卒業年を西暦と和暦で一覧表示します。履歴書の学歴欄の記入にそのまま使えます。"
+  faqs={faqs}
+  related={related}
+>
+  <div class="calc" slot="calc">
+    <div class="row">
+      <div>
+        <label for="birth-date">生年月日</label>
+        <input type="date" id="birth-date" />
+      </div>
+      <button type="button" class="btn" id="calc-btn">計算する</button>
+    </div>
+    <div id="result" aria-live="polite"></div>
+  </div>
+
+  <Fragment slot="explain">
+    <h2>学年の区切りは「4月2日生まれ〜翌年4月1日生まれ」</h2>
+    <p>
+      日本の学年は、<strong>4月2日生まれからその翌年の4月1日生まれまで</strong>が同じ学年になります。小学校には「満6歳になった日の後の、最初の4月」に入学するため、
+    </p>
+    <ul>
+      <li><strong>4月2日〜12月31日生まれ</strong> — 生まれた年の <strong>7年後</strong>の4月に小学校入学</li>
+      <li><strong>1月1日〜4月1日生まれ（早生まれ）</strong> — 生まれた年の <strong>6年後</strong>の4月に小学校入学</li>
+    </ul>
+    <p>
+      となります。区切りが「3月31日」ではなく「4月1日」なのは、法律上、年齢が<strong>誕生日の前日</strong>に加わるためです（詳しくは下記のFAQ参照）。本ツールはこの区切りを自動判定するので、早生まれの方もそのまま入力するだけで正しい学年が計算できます。
+    </p>
+    <h2>履歴書の学歴欄での使い方</h2>
+    <p>
+      履歴書の学歴欄は「いつ・どの学校に入学／卒業したか」を年月で書きます。本ツールの結果は西暦と和暦を併記しているので、履歴書の表記に合わせてどちらでも転記できます。書き方のポイントは次のとおりです。
+    </p>
+    <ul>
+      <li>学歴は一般に<strong>中学校卒業</strong>または<strong>高校入学</strong>から書き始めます（新卒の場合は中学卒業から書くのが丁寧とされます）。</li>
+      <li>学校名は「高校」と略さず「◯◯高等学校」と正式名称で書きます。</li>
+      <li>西暦・和暦は履歴書全体で統一します。</li>
+    </ul>
+    <h2>計算の前提</h2>
+    <ul>
+      <li>入学は<strong>4月</strong>、卒業は<strong>3月</strong>としています（一般的な日本の学校の場合）。</li>
+      <li>浪人・留年・休学のない<strong>ストレート進学</strong>の場合の年です。該当がある場合はその年数を足してください。</li>
+      <li>大学は4年制のほか、短大・専門学校（2年制）の卒業年も表示します。医学部など6年制の学部は4年制の卒業年に2年を足してください。</li>
+    </ul>
+  </Fragment>
+</ToolLayout>
+
+<script>
+  import { parseYmd, toYmd, toWareki, isHayaumare, schoolMilestones } from "../lib/dateCore.js";
+  import { shareButtonHTML, bindShareButtons, getParam, setParams } from "../lib/ui.js";
+
+  const $ = (id) => document.getElementById(id);
+  const result = $("result");
+
+  // 表のセル用: 「2007年4月」＋和暦の添え字
+  function ymCell(year, month) {
+    const w = toWareki(new Date(year, month - 1, 1));
+    return `${year}年${month}月${w ? `<span class="sub">${w}</span>` : ""}`;
+  }
+
+  // 見出し用: 「2007年（平成19年）4月」
+  function ymText(year, month) {
+    const w = toWareki(new Date(year, month - 1, 1));
+    return `${year}年${w ? `（${w}）` : ""}${month}月`;
+  }
+
+  // 今日が属する年度（4月始まり）
+  function currentSchoolYear(today) {
+    return today.getMonth() >= 3 ? today.getFullYear() : today.getFullYear() - 1;
+  }
+
+  // 現在の学年の説明文と、強調表示する行の key
+  function currentStatus(entranceYear, today) {
+    const n = currentSchoolYear(today) - entranceYear; // 小学校入学年度からの経過年数
+    if (n < -3) return { text: "現在は未就学（幼稚園入園前）です。", key: null };
+    if (n < 0) return { text: `現在は幼稚園の${["年少", "年中", "年長"][n + 3]}にあたる年度です。`, key: "kindergarten" };
+    if (n < 6) return { text: `現在は小学${n + 1}年生の年度です。`, key: "elementary" };
+    if (n < 9) return { text: `現在は中学${n - 5}年生の年度です。`, key: "junior" };
+    if (n < 12) return { text: `現在は高校${n - 8}年生の年度です。`, key: "high" };
+    if (n < 16) return { text: `現在は大学${n - 11}年生（4年制・現役の場合）の年度です。`, key: "university" };
+    return { text: null, key: null };
+  }
+
+  function run() {
+    const v = $("birth-date").value;
+    if (!v) return;
+    const birth = parseYmd(v);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const rows = schoolMilestones(birth);
+    const entranceYear = rows.find((r) => r.key === "elementary").enter;
+    const status = currentStatus(entranceYear, today);
+    const hayaumare = isHayaumare(birth);
+
+    const tableRows = rows
+      .map(
+        (r) => `<tr${r.key === status.key ? ' class="is-main"' : ""}>
+          <td>${r.label}</td>
+          <td class="date-cell">${ymCell(r.enter, 4)}</td>
+          <td class="date-cell">${ymCell(r.graduate, 3)}</td>
+        </tr>`
+      )
+      .join("");
+
+    result.innerHTML = `
+      <div class="result-big">小学校入学は ${ymText(entranceYear, 4)}</div>
+      <p class="result-caption">${hayaumare ? "早生まれ（1月1日〜4月1日生まれ）なので、同年生まれの4月2日以降の人より1学年上です。" : "4月2日以降の生まれなので、翌年以降の早生まれの人と同じ学年です。"}${status.text ? "<br>" + status.text : ""}</p>
+      <table class="milestones">
+        <thead><tr><th>学校</th><th>入学</th><th>卒業</th></tr></thead>
+        <tbody>${tableRows}</tbody>
+      </table>
+      <p class="result-note">浪人・留年なしのストレート進学の場合です。幼稚園は3年保育、入学は4月・卒業は3月として計算しています。</p>
+      ${shareButtonHTML()}`;
+    bindShareButtons(result);
+    setParams({ d: toYmd(birth) });
+  }
+
+  $("calc-btn").addEventListener("click", run);
+  const p = getParam("d");
+  if (p) {
+    $("birth-date").value = p;
+    run();
+  }
+</script>

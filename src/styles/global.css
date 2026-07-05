@@ -95,6 +95,7 @@ small, .small { font-size: 0.82rem; color: var(--muted); }
   margin: 1.2rem 0 1.8rem;
 }
 .calc .row { display: flex; gap: 0.9rem; flex-wrap: wrap; align-items: flex-end; margin-bottom: 0.9rem; }
+.calc .row > div { min-width: 0; max-width: 100%; }
 .calc label { display: block; font-size: 0.82rem; color: var(--muted); margin-bottom: 0.25rem; }
 .calc input[type="date"], .calc input[type="number"], .calc select {
   font: inherit;
@@ -104,6 +105,7 @@ small, .small { font-size: 0.82rem; color: var(--muted); }
   background: var(--paper);
   color: var(--ink);
   min-height: 2.7rem;
+  max-width: 100%;
 }
 .calc input:focus-visible, .calc select:focus-visible, .calc button:focus-visible,
 a:focus-visible, summary:focus-visible {
@@ -243,10 +245,20 @@ a:focus-visible, summary:focus-visible {
 .related { margin-top: 2.4rem; }
 .related ul { padding-left: 1.3rem; }
 
+/* ---------- レスポンシブ ---------- */
+@media (max-width: 640px) {
+  /* 入力欄・ボタンを縦積みにして全幅に */
+  .calc .row > div { flex: 1 1 100%; }
+  .calc .row > .btn { flex: 1 1 100%; }
+  .calc input[type="date"], .calc select { width: 100%; }
+  .calc .row.radio-group { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
+}
 @media (max-width: 480px) {
   h1 { font-size: 1.45rem; }
   .calc { padding: 1.1rem 1rem 1.3rem; }
   .calc .row { gap: 0.7rem; }
+  .himekuri-day { font-size: 3.4rem; }
+  .milestones { font-size: 0.88rem; }
 }
 @media (prefers-reduced-motion: no-preference) {
   .himekuri { animation: himekuri-in 0.35s ease-out; }

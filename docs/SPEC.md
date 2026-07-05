@@ -43,6 +43,7 @@
 - `seigo.astro` — 生後日数計算
 - `cooling-off.astro` — クーリングオフ期限計算
 - `kinenbi.astro` — 記念日計算
+- `nyugaku.astro` — 入学・卒業年の計算（学歴早見表）
 - `column/` — コラム記事
 - `about.astro` / `privacy.astro` / `contact.astro` — 運営者情報・プライバシーポリシー・お問い合わせ（Google Form）
 
