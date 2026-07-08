@@ -23,7 +23,7 @@
 }
 
 * { box-sizing: border-box; }
-html { font-size: 16px; }
+html { font-size: 16px; scroll-behavior: smooth; }
 body {
   margin: 0;
   background: var(--paper);
@@ -239,6 +239,10 @@ a:focus-visible, summary:focus-visible {
 
 /* ---------- 解説・FAQ ---------- */
 .explain { margin-top: 2.4rem; }
+.holiday-guide { scroll-margin-top: 1.2rem; }
+.holiday-guide h3 { margin-bottom: 0.2rem; }
+.holiday-guide p { margin-top: 0.2rem; }
+.holiday-guide strong { display: block; background: none; padding: 0; }
 .explain ul { padding-left: 1.3rem; }
 .faq details {
   border: 1px solid var(--line);
