@@ -1,0 +1,169 @@
+---
+import ToolLayout from "../layouts/ToolLayout.astro";
+import { HOLIDAY_RANGE, holidayYears } from "../lib/dateCore.js";
+
+const years = holidayYears();
+const fromYear = HOLIDAY_RANGE.from.slice(0, 4);
+const toYear = HOLIDAY_RANGE.to.slice(0, 4);
+
+const faqs = [
+  {
+    q: "次の祝日はいつですか？",
+    a: "このページを開くと、今日を基準にした「次の祝日」とそこまでの残り日数を自動で表示します。年を切り替えれば、その年の祝日を一覧で確認できます。",
+  },
+  {
+    q: "「連休」はどう判定していますか？",
+    a: "祝日の前後に続く土曜・日曜・祝日・振替休日をつなげて数え、3日以上続く場合に「◯連休」と表示しています。飛び石連休（間に平日がある場合）は別々の連休として数えます。会社や学校のカレンダー次第では、有給などでさらに長い連休になることもあります。",
+  },
+  {
+    q: "何年分の祝日に対応していますか？",
+    a: `${fromYear}年〜${toYear}年に対応しています。祝日は「国民の祝日に関する法律」で定められ、春分の日・秋分の日は前年2月の官報公示で正式に確定します。そのため本ツールは確定済みの範囲のみを掲載し、毎年内閣府の公表データをもとに更新しています。`,
+  },
+  {
+    q: "振替休日や国民の休日も含まれますか？",
+    a: "含まれます。祝日が日曜と重なったときの「振替休日」、祝日にはさまれた平日が休みになる「国民の休日」も、実際に休みになる日として一覧に表示します。それぞれのしくみはコラムで解説しています。",
+  },
+];
+
+const keyPoints = [
+  "ページを開くとすぐに<strong>次の祝日と残り日数</strong>がわかる",
+  "年を切り替えると、その年の<strong>祝日を一覧</strong>で確認できる",
+  "3日以上つながる休みには<strong>「◯連休」</strong>の目印がつく",
+];
+
+const related = [
+  { href: "/eigyobi/", label: "営業日計算 — 土日祝を除いた「◯営業日後」はこちら" },
+  { href: "/column/shukujitsu/", label: "コラム: 祝日はどうやって決まる？振替休日と国民の休日のしくみ" },
+  { href: "/column/rokuyo/", label: "コラム: 六曜とは？大安・仏滅・友引の意味" },
+];
+---
+
+<ToolLayout
+  title="祝日カレンダー — 次の祝日はいつ？連休が一目でわかる祝日一覧"
+  description={`今日を基準に「次の祝日」までの残り日数を表示。${fromYear}年〜${toYear}年の国民の祝日を年ごとに一覧化し、3連休以上の連休にも目印をつけます。振替休日・国民の休日にも対応。`}
+  h1="祝日カレンダー"
+  lead="今日から見た「次の祝日」と、その年の祝日一覧をまとめて表示します。連休も一目で把握できます。"
+  keyPoints={keyPoints}
+  faqs={faqs}
+  related={related}
+>
+  <div class="calc" slot="calc">
+    <div id="next-holiday" aria-live="polite"></div>
+    <div class="row">
+      <div>
+        <label for="year-select">年を選ぶ</label>
+        <select id="year-select">
+          {years.map((y) => <option value={y}>{y}年</option>)}
+        </select>
+      </div>
+    </div>
+    <div id="list" aria-live="polite"></div>
+  </div>
+
+  <Fragment slot="explain">
+    <h2>祝日には3つのタイプがあります</h2>
+    <p>
+      国民の祝日は「国民の祝日に関する法律」（祝日法）で決まっています。元日（1月1日）のように<strong>日付が固定</strong>のもの、成人の日（1月の第2月曜日）のように<strong>曜日で決まる</strong>もの（ハッピーマンデー）、春分の日・秋分の日のように<strong>天文計算で毎年変わる</strong>ものの3タイプです。日付が年ごとに動くものがあるため、正確な日付は毎年カレンダーで確認するのが確実です。
+    </p>
+    <h2>振替休日・国民の休日も休みです</h2>
+    <p>
+      祝日が日曜日と重なると、その後の祝日でない最も近い日が休みになります（<strong>振替休日</strong>）。また、祝日と祝日にはさまれた平日は<strong>国民の休日</strong>として休みになります。本ツールの一覧はこれらも含めて表示するので、実際に休みになる日をそのまま把握できます。
+    </p>
+    <h2>連休の目印について</h2>
+    <p>
+      土曜・日曜・祝日・振替休日が3日以上続く場合、その祝日に「◯連休」と表示します。ゴールデンウィークやシルバーウィークのように祝日が集中する時期は、この目印で大型連休を見つけやすくなります。旅行や帰省の計画、営業日の見通しにお使いください。
+    </p>
+    <p class="small">
+      掲載範囲は{fromYear}年〜{toYear}年です。春分の日・秋分の日は前年2月の官報公示で確定するため、確定済みの年のみを掲載しています。
+    </p>
+  </Fragment>
+</ToolLayout>
+
+<script>
+  import {
+    holidaysInYear,
+    nextHoliday,
+    holidayRunLength,
+    holidayYears,
+    diffDays,
+    formatJa,
+    toYmd,
+  } from "../lib/dateCore.js";
+  import { getParam, setParams } from "../lib/ui.js";
+
+  const $ = (id) => document.getElementById(id);
+  const nextEl = $("next-holiday");
+  const listEl = $("list");
+  const select = $("year-select");
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const todayYmd = toYmd(today);
+
+  function renderNext() {
+    const next = nextHoliday(today);
+    if (!next) {
+      nextEl.innerHTML = `<p class="result-caption">掲載範囲内に、これから来る祝日はありません。</p>`;
+      return;
+    }
+    const days = diffDays(today, next.date, false);
+    const when = days === 0 ? "今日" : `あと${days}日`;
+    nextEl.innerHTML = `<p class="result-caption">次の祝日</p>
+      <div class="result-big">${when}</div>
+      <p class="result-caption">${formatJa(next.date)}・${next.name}</p>`;
+  }
+
+  function renderYear(year) {
+    const items = holidaysInYear(year);
+    if (items.length === 0) {
+      listEl.innerHTML = `<p class="result-caption">${year}年の祝日データはありません。</p>`;
+      return;
+    }
+    const rows = items
+      .map((it) => {
+        const ymd = toYmd(it.date);
+        const isNext = ymd >= todayYmd;
+        const run = holidayRunLength(it.date);
+        const renbi = run >= 3 ? `<span class="sub">${run}連休</span>` : "";
+        let status;
+        if (ymd < todayYmd) status = `<span class="sub">済</span>`;
+        else if (ymd === todayYmd) status = "今日";
+        else status = `あと${diffDays(today, it.date, false)}日`;
+        // 今日以降で最初の祝日の行を強調
+        const main = ymd === firstUpcomingYmd ? ' class="is-main"' : "";
+        return `<tr${main}>
+          <td class="date-cell is-red">${formatJa(it.date)}</td>
+          <td>${it.name}${renbi}</td>
+          <td class="date-cell">${status}</td>
+        </tr>`;
+      })
+      .join("");
+    listEl.innerHTML = `<table class="milestones">
+      <thead><tr><th>日付</th><th>祝日</th><th>残り</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>`;
+  }
+
+  // 今日以降で最初の祝日（強調表示用）。全期間から探す。
+  const upcoming = nextHoliday(today);
+  const firstUpcomingYmd = upcoming ? toYmd(upcoming.date) : "";
+
+  function show(year) {
+    select.value = String(year);
+    renderYear(year);
+    setParams({ y: String(year) });
+  }
+
+  select.addEventListener("change", () => show(Number(select.value)));
+
+  renderNext();
+
+  const years = holidayYears();
+  const paramYear = Number(getParam("y"));
+  const currentYear = today.getFullYear();
+  let initial;
+  if (years.includes(paramYear)) initial = paramYear;
+  else if (years.includes(currentYear)) initial = currentYear;
+  else initial = years[0];
+  show(initial);
+</script>

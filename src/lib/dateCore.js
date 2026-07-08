@@ -112,6 +112,43 @@ export function inHolidayRange(date) {
   return ymd >= HOLIDAY_RANGE.from && ymd <= HOLIDAY_RANGE.to;
 }
 
+/** 祝日データがカバーする年の配列（例: [2025, 2026, 2027]） */
+export function holidayYears() {
+  const from = Number(HOLIDAY_RANGE.from.slice(0, 4));
+  const to = Number(HOLIDAY_RANGE.to.slice(0, 4));
+  const years = [];
+  for (let y = from; y <= to; y++) years.push(y);
+  return years;
+}
+
+/** 指定年の祝日一覧 [{ date: Date, name }]（振替休日・国民の休日を含む・日付順） */
+export function holidaysInYear(year) {
+  const prefix = `${year}-`;
+  return holidayData.holidays
+    .filter((h) => h.date.startsWith(prefix))
+    .map((h) => ({ date: parseYmd(h.date), name: h.name }));
+}
+
+/** 基準日「以降」で最初にくる祝日 { date: Date, name }。範囲内になければ null */
+export function nextHoliday(from) {
+  const fromYmd = toYmd(from);
+  const hit = holidayData.holidays.find((h) => h.date >= fromYmd);
+  return hit ? { date: parseYmd(hit.date), name: hit.name } : null;
+}
+
+/**
+ * date を含む「連続した休み（土日＋祝日）」の日数。
+ * 単独の平日祝日なら 1、飛び石を含まず前後の休みだけを数える。
+ */
+export function holidayRunLength(date) {
+  const off = (d) => isWeekend(d) || isHoliday(d);
+  if (!off(date)) return 0;
+  let len = 1;
+  for (let d = addDays(date, -1); off(d); d = addDays(d, -1)) len++;
+  for (let d = addDays(date, 1); off(d); d = addDays(d, 1)) len++;
+  return len;
+}
+
 /**
  * n営業日後（n>0）/ n営業日前（n<0）。
  * 「3営業日後」＝起算日の翌日から数えて3番目の営業日（起算日当日は数えない）。
