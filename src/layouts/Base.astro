@@ -73,5 +73,33 @@ const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site).href : un
         <p>© {new Date().getFullYear()} {SITE.name}</p>
       </div>
     </footer>
+    <button type="button" class="to-top" id="to-top" aria-label="ページの先頭へ戻る">
+      <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M6 14l6-6 6 6" />
+      </svg>
+    </button>
+    <script>
+      // 「トップへ戻る」ボタン: 1画面分スクロールしたら表示
+      const toTop = document.getElementById("to-top");
+      if (toTop) {
+        let ticking = false;
+        const update = () => {
+          toTop.classList.toggle("is-visible", window.scrollY > window.innerHeight);
+          ticking = false;
+        };
+        window.addEventListener(
+          "scroll",
+          () => {
+            if (!ticking) {
+              ticking = true;
+              requestAnimationFrame(update);
+            }
+          },
+          { passive: true }
+        );
+        update();
+        toTop.addEventListener("click", () => window.scrollTo({ top: 0 }));
+      }
+    </script>
   </body>
 </html>

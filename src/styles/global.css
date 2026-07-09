@@ -291,6 +291,32 @@ a:focus-visible, summary:focus-visible {
 .related { margin-top: 2.4rem; }
 .related ul { padding-left: 1.3rem; }
 
+/* ---------- トップへ戻るボタン ---------- */
+.to-top {
+  position: fixed;
+  right: 1rem;
+  bottom: 1rem;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  background: rgba(250, 249, 245, 0.92); /* --paper を少し透かす */
+  color: var(--ai);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(35, 39, 46, 0.14);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(6px);
+  transition: opacity 0.25s, visibility 0.25s, transform 0.25s;
+  z-index: 10;
+}
+.to-top.is-visible { opacity: 1; visibility: visible; transform: none; }
+.to-top:hover { color: #fff; background: var(--ai); border-color: var(--ai); }
+.to-top:focus-visible { outline: 2px solid var(--ai); outline-offset: 2px; }
+
 /* ---------- レスポンシブ ---------- */
 @media (max-width: 640px) {
   /* 入力欄・ボタンを縦積みにして全幅に */
