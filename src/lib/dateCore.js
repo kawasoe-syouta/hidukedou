@@ -248,8 +248,9 @@ export function elementaryEntranceYear(birthDate) {
 }
 
 /**
- * 学歴早見（幼稚園〜大学の入学・卒業年）。浪人・留年なしのストレート進学の場合。
- * enter / graduate は西暦年。入学（入園）は4月、卒業（卒園）は3月。
+ * 学歴早見（幼稚園〜大学院の入学・卒業年）。浪人・留年なしのストレート進学の場合。
+ * enter / graduate は西暦年。入学（入園）は4月、卒業（卒園・修了）は3月。
+ * 大学院は「卒業」ではなく「修了」と表記する。
  */
 export function schoolMilestones(birthDate) {
   const e = elementaryEntranceYear(birthDate);
@@ -258,8 +259,12 @@ export function schoolMilestones(birthDate) {
     { key: "elementary", label: "小学校", enter: e, graduate: e + 6 },
     { key: "junior", label: "中学校", enter: e + 6, graduate: e + 9 },
     { key: "high", label: "高等学校", enter: e + 9, graduate: e + 12 },
+    { key: "kosen", label: "高専（5年制）", enter: e + 9, graduate: e + 14 },
     { key: "college2", label: "短大・専門学校（2年制）", enter: e + 12, graduate: e + 14 },
     { key: "university", label: "大学（4年制）", enter: e + 12, graduate: e + 16 },
+    { key: "university6", label: "大学（6年制・医歯薬獣医など）", enter: e + 12, graduate: e + 18 },
+    { key: "master", label: "大学院 修士課程（2年）", enter: e + 16, graduate: e + 18 },
+    { key: "doctor", label: "大学院 博士課程（3年）", enter: e + 18, graduate: e + 21 },
   ];
 }
 
