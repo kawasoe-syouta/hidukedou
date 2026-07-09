@@ -58,10 +58,9 @@ const related = [
   <div class="calc" slot="calc">
     <div class="row">
       <div>
-        <label for="the-date">調べたい日</label>
+        <label for="the-date">調べたい日（選ぶと自動で表示されます）</label>
         <input type="date" id="the-date" min={KYUREKI_RANGE.from} max={KYUREKI_RANGE.to} />
       </div>
-      <button type="button" class="btn" id="calc-btn">六曜を調べる</button>
     </div>
     <div id="result" aria-live="polite"></div>
 
@@ -218,7 +217,6 @@ const related = [
     }
   }
 
-  $("calc-btn").addEventListener("click", () => run(true));
   input.addEventListener("change", () => run(true));
   monthSelect.addEventListener("change", () => renderMonth(monthSelect.value, true));
 
