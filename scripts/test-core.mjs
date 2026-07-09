@@ -4,6 +4,7 @@ import {
   countBusinessDays, memorialServices, babyAge, babyEvents,
   coolingOffDeadline, anniversaryMilestones, holidayName,
 } from "../src/lib/dateCore.js";
+import { kyureki, rokuyo, formatKyureki, nextRokuyoDays } from "../src/lib/rokuyo.js";
 
 let pass = 0, fail = 0;
 function eq(actual, expected, label) {
@@ -77,6 +78,22 @@ const ann = anniversaryMilestones(parseYmd("2025-01-01"));
 eq(find(ann, "100日目"), "2025-04-10", "100日目=+99");
 eq(find(ann, "1周年"), "2026-01-01", "1周年");
 eq(find(ann, "1000日目"), "2027-09-27", "1000日目=+999");
+
+// --- 六曜・旧暦（市販の旧暦カレンダーと照合済みの値） ---
+const k1 = kyureki(parseYmd("2026-01-01"));
+eq(`${k1.month}/${k1.day}${k1.leap ? "閏" : ""}`, "11/13", "旧暦変換 2026-01-01=旧暦11月13日");
+eq(formatKyureki(kyureki(parseYmd("2025-07-25"))), "旧暦閏6月1日", "閏月の表記");
+eq(rokuyo(parseYmd("2025-01-01")).name, "先勝", "2025-01-01=先勝(旧暦12月2日)");
+eq(rokuyo(parseYmd("2025-01-29")).name, "先勝", "旧暦元日は必ず先勝");
+eq(rokuyo(parseYmd("2025-07-25")).name, "赤口", "閏6月1日=赤口(閏月は元の月の数字で計算)");
+eq(rokuyo(parseYmd("2026-01-01")).name, "大安", "2026-01-01=大安(旧暦11月13日)");
+eq(rokuyo(parseYmd("2026-07-09")).name, "大安", "2026-07-09=大安(旧暦5月25日)");
+eq(rokuyo(parseYmd("2026-12-31")).name, "先負", "2026-12-31=先負(旧暦11月23日)");
+eq(rokuyo(parseYmd("2024-12-31")), null, "範囲より前はnull");
+eq(rokuyo(parseYmd("2028-01-01")), null, "範囲より後はnull");
+const taian = nextRokuyoDays(parseYmd("2026-07-09"), "大安", 2);
+eq(taian[0], "2026-07-09", "次の大安: 当日が大安なら当日を含む");
+eq(taian[1], "2026-07-19", "次の大安: 月替わり(7/14=旧暦6月1日)をまたいで7/19");
 
 console.log(`\n結果: ${pass} passed, ${fail} failed`);
 process.exit(fail ? 1 : 0);

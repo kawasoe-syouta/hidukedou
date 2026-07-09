@@ -1,0 +1,240 @@
+---
+import ToolLayout from "../layouts/ToolLayout.astro";
+import { ROKUYO_DISPLAY, KYUREKI_RANGE, kyurekiYears } from "../lib/rokuyo.js";
+
+const fromYear = KYUREKI_RANGE.from.slice(0, 4);
+const toYear = KYUREKI_RANGE.to.slice(0, 4);
+
+// 月選択の候補（対応範囲の全36か月）
+const monthOptions = kyurekiYears().flatMap((y) =>
+  Array.from({ length: 12 }, (_, i) => ({
+    value: `${y}-${String(i + 1).padStart(2, "0")}`,
+    label: `${y}年${i + 1}月`,
+  }))
+);
+
+const faqs = [
+  {
+    q: "今日の六曜はすぐわかりますか？",
+    a: "このページを開くと、今日の日付の六曜を自動で表示します。日付を選べば、過去や未来の日の六曜も調べられます。",
+  },
+  {
+    q: "六曜はどうやって決まりますか？",
+    a: "占いではなく、旧暦（太陰太陽暦）の月と日から機械的に決まります。「旧暦の月＋旧暦の日」を6で割った余りが 0なら大安、1なら赤口、2なら先勝、3なら友引、4なら先負、5なら仏滅です。旧暦1月1日は必ず先勝になり、あとは順番に繰り返すだけの単純な循環です。",
+  },
+  {
+    q: "対応している期間はいつからいつまでですか？",
+    a: `${fromYear}年〜${toYear}年に対応しています。六曜のもとになる旧暦の各月1日（朔＝新月の日）は天文計算で決まり、国立天文台が毎年公表する暦要項で確定します。本ツールは確定済みの範囲のみを掲載し、毎年更新しています。`,
+  },
+  {
+    q: "大安や仏滅はどのくらい気にするべきですか？",
+    a: "六曜は仏教とも科学とも関係のない暦の習慣なので、自分だけの予定では気にする必要はありません。ただし結婚式や入籍は親世代が気にする場合があるため、両家に一言確認しておくと安心です。詳しくはコラム「六曜とは？」で解説しています。",
+  },
+];
+
+const keyPoints = [
+  "ページを開くと<strong>今日の六曜</strong>がすぐわかる",
+  "<strong>次の大安</strong>の日付と残り日数を一覧表示。日取り選びにそのまま使える",
+  "月ごとの六曜カレンダーつき。六曜は旧暦から<strong>機械的に決まる</strong>暦の習慣",
+];
+
+const related = [
+  { href: "/kinenbi/", label: "記念日カウンター — 入籍日・結婚式の日取り決めのお供に" },
+  { href: "/shijukunichi/", label: "四十九日・法要日の計算 — 法要の日取りは六曜より参列しやすさで" },
+  { href: "/shukujitsu/", label: "祝日カレンダー — 次の祝日と連休はこちら" },
+  { href: "/column/rokuyo/", label: "コラム: 六曜とは？大安・仏滅・友引の意味と、気にしなくてよい場面" },
+];
+---
+
+<ToolLayout
+  title="六曜カレンダー — 今日の六曜と次の大安がわかる（大安・仏滅・友引）"
+  description={`今日の六曜（大安・仏滅・友引・先勝・先負・赤口）を自動表示。日付を選んで調べられるほか、次の大安までの残り日数と月ごとの六曜一覧も。${fromYear}年〜${toYear}年対応。`}
+  h1="六曜カレンダー"
+  lead="今日の六曜と、次の大安までの残り日数を表示します。日付を選べば大安・仏滅などの六曜と旧暦の日付を確認でき、月ごとの一覧で日取り選びにも使えます。"
+  keyPoints={keyPoints}
+  faqs={faqs}
+  related={related}
+>
+  <div class="calc" slot="calc">
+    <div class="row">
+      <div>
+        <label for="the-date">調べたい日</label>
+        <input type="date" id="the-date" min={KYUREKI_RANGE.from} max={KYUREKI_RANGE.to} />
+      </div>
+      <button type="button" class="btn" id="calc-btn">六曜を調べる</button>
+    </div>
+    <div id="result" aria-live="polite"></div>
+
+    <p class="result-caption">次の大安（今日から）</p>
+    <div id="taian-list" aria-live="polite"></div>
+
+    <div class="row">
+      <div>
+        <label for="month-select">月ごとの六曜一覧</label>
+        <select id="month-select">
+          {monthOptions.map((m) => <option value={m.value}>{m.label}</option>)}
+        </select>
+      </div>
+    </div>
+    <div id="month-list" aria-live="polite"></div>
+  </div>
+
+  <Fragment slot="explain">
+    <h2>六曜の6つの意味</h2>
+    <p>
+      六曜（ろくよう）は、先勝→友引→先負→仏滅→大安→赤口の6つが順に繰り返す、カレンダーの暦注です。それぞれ次のような意味があるとされています。
+    </p>
+    <table class="milestones">
+      <tr><th>六曜</th><th>読み</th><th>一般にいわれる意味</th></tr>
+      {
+        ROKUYO_DISPLAY.map((r) => (
+          <tr>
+            <td>{r.name}</td>
+            <td>{r.yomi}</td>
+            <td>{r.summary}。{r.desc}</td>
+          </tr>
+        ))
+      }
+    </table>
+    <h2>六曜は旧暦から機械的に決まります</h2>
+    <p>
+      六曜は占いの結果ではなく、<strong>旧暦（太陰太陽暦）の月と日だけで決まります</strong>。計算はとても単純で、「旧暦の月＋旧暦の日」を6で割った余りで決まります。
+    </p>
+    <table class="milestones">
+      <tr><th>余り</th><th>六曜</th><th>例</th></tr>
+      <tr><td class="date-cell">0</td><td>大安</td><td>旧暦1月5日（1+5=6）</td></tr>
+      <tr><td class="date-cell">1</td><td>赤口</td><td>旧暦1月6日（1+6=7）</td></tr>
+      <tr><td class="date-cell">2</td><td>先勝</td><td>旧暦1月1日（1+1=2）＝旧暦の元日は必ず先勝</td></tr>
+      <tr><td class="date-cell">3</td><td>友引</td><td>旧暦2月1日（2+1=3）</td></tr>
+      <tr><td class="date-cell">4</td><td>先負</td><td>旧暦3月1日（3+1=4）</td></tr>
+      <tr><td class="date-cell">5</td><td>仏滅</td><td>旧暦4月1日（4+1=5）</td></tr>
+    </table>
+    <p>
+      旧暦の月が変わると並びが途中で飛ぶため、今のカレンダーの上では不規則に見えますが、中身はこれだけの循環です。本ツールは選んだ日の<strong>旧暦の日付もあわせて表示</strong>するので、六曜がその余りどおりになっていることを確かめられます。なお旧暦の閏月（うるうづき）は、元の月と同じ月の数字で計算します。
+    </p>
+    <h2>対応期間とデータについて</h2>
+    <p>
+      対応期間は<strong>{fromYear}年〜{toYear}年</strong>です。旧暦の各月1日は「朔（さく）＝新月」の日で、天文計算により決まり、国立天文台が毎年公表する暦要項で確定します。本ツールは確定済みの旧暦データのみを掲載し、毎年更新しています。
+    </p>
+    <h2>気にしすぎなくて大丈夫です</h2>
+    <p>
+      六曜は仏教とも科学とも関係のない、暦の上の習慣です。自分だけの予定なら気にする必要はありませんし、四十九日などの法要も六曜を気にしなくてよいとされています。結婚式や入籍だけは親世代が気にすることがあるため、一言確認しておくとスムーズです。由来や葬儀と友引の関係は<a href="/column/rokuyo/">コラム「六曜とは？」</a>で詳しく解説しています。
+    </p>
+  </Fragment>
+</ToolLayout>
+
+<script>
+  import { parseYmd, toYmd, formatJa, diffDays, holidayName } from "../lib/dateCore.js";
+  import { rokuyo, kyureki, formatKyureki, nextRokuyoDays, KYUREKI_RANGE } from "../lib/rokuyo.js";
+  import { himekuriHTML, shareButtonHTML, bindShareButtons, getParam, setParams } from "../lib/ui.js";
+
+  const $ = (id) => document.getElementById(id);
+  const result = $("result");
+  const taianEl = $("taian-list");
+  const monthEl = $("month-list");
+  const monthSelect = $("month-select");
+  const input = $("the-date");
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const esc = (s) =>
+    String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+
+  function renderResult(date, updateUrl) {
+    const r = rokuyo(date);
+    if (!r) {
+      result.innerHTML = `<p class="result-caption">この日付は対応範囲外です（${KYUREKI_RANGE.from.slice(0, 4)}年〜${KYUREKI_RANGE.to.slice(0, 4)}年に対応しています）。</p>`;
+      return;
+    }
+    const k = kyureki(date);
+    const isToday = toYmd(date) === toYmd(today);
+    result.innerHTML = `
+      ${himekuriHTML(date)}
+      <p class="result-caption">${isToday ? "今日" : esc(formatJa(date))}の六曜</p>
+      <div class="result-big">${esc(r.name)}</div>
+      <p class="result-caption">よみ「${esc(r.yomi)}」・${esc(formatKyureki(k))}・${esc(r.summary)}</p>
+      <p>${esc(r.desc)}</p>
+      ${shareButtonHTML()}`;
+    bindShareButtons(result);
+    if (updateUrl) setParams({ d: toYmd(date) });
+  }
+
+  function renderTaian() {
+    const days = nextRokuyoDays(today, "大安", 6);
+    if (days.length === 0) {
+      taianEl.innerHTML = `<p class="result-caption">掲載範囲内に、これから来る大安はありません。</p>`;
+      return;
+    }
+    const rows = days
+      .map((d, i) => {
+        const holiday = holidayName(d);
+        const red = d.getDay() === 0 || holiday;
+        const left = diffDays(today, d, false);
+        return `<tr${i === 0 ? ' class="is-main"' : ""}>
+          <td class="date-cell${red ? " is-red" : ""}">${esc(formatJa(d))}${holiday ? `<span class="sub">${esc(holiday)}</span>` : ""}</td>
+          <td class="date-cell">${left === 0 ? "今日" : `あと${left}日`}</td>
+        </tr>`;
+      })
+      .join("");
+    taianEl.innerHTML = `<table class="milestones">
+      <thead><tr><th>日付</th><th>残り</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>`;
+  }
+
+  function renderMonth(ym, updateUrl) {
+    const [y, m] = ym.split("-").map(Number);
+    const last = new Date(y, m, 0).getDate();
+    const todayYmd = toYmd(today);
+    const rows = [];
+    for (let day = 1; day <= last; day++) {
+      const d = new Date(y, m - 1, day);
+      const r = rokuyo(d);
+      const holiday = holidayName(d);
+      const red = d.getDay() === 0 || holiday;
+      rows.push(`<tr${toYmd(d) === todayYmd ? ' class="is-main"' : ""}>
+        <td class="date-cell${red ? " is-red" : ""}">${esc(formatJa(d))}${holiday ? `<span class="sub">${esc(holiday)}</span>` : ""}</td>
+        <td>${r ? (r.name === "大安" ? `<strong>${esc(r.name)}</strong>` : esc(r.name)) : "—"}</td>
+      </tr>`);
+    }
+    monthEl.innerHTML = `<table class="milestones">
+      <thead><tr><th>日付</th><th>六曜</th></tr></thead>
+      <tbody>${rows.join("")}</tbody>
+    </table>`;
+    if (updateUrl) setParams({ m: ym });
+  }
+
+  // 日付を調べる（月一覧もその月に追従させる）
+  function run(updateUrl) {
+    const v = input.value;
+    if (!v) return;
+    const date = parseYmd(v);
+    renderResult(date, updateUrl);
+    const ym = v.slice(0, 7);
+    if ([...monthSelect.options].some((o) => o.value === ym)) {
+      monthSelect.value = ym;
+      renderMonth(ym, updateUrl);
+    }
+  }
+
+  $("calc-btn").addEventListener("click", () => run(true));
+  input.addEventListener("change", () => run(true));
+  monthSelect.addEventListener("change", () => renderMonth(monthSelect.value, true));
+
+  renderTaian();
+
+  // 初期表示: URLパラメータ > 今日
+  const paramD = getParam("d");
+  const initial = paramD || toYmd(today);
+  input.value = initial;
+  run(Boolean(paramD));
+
+  const paramM = getParam("m");
+  if (paramM && [...monthSelect.options].some((o) => o.value === paramM)) {
+    monthSelect.value = paramM;
+    renderMonth(paramM, false);
+  }
+  // 今日が対応範囲外などで月一覧が未表示のときは、選択中の月を表示しておく
+  if (!monthEl.innerHTML) renderMonth(monthSelect.value, false);
+</script>

@@ -1,6 +1,6 @@
 # ひづけ堂 仕様書
 
-最終更新: 2026-07-05
+最終更新: 2026-07-09
 
 ## サイト概要
 
@@ -38,6 +38,7 @@
 ## ページ構成（src/pages/）
 
 - `index.astro` — トップ（ツール一覧）
+- `rokuyo.astro` — 六曜カレンダー（今日の六曜・次の大安・月ごと一覧）
 - `shijukunichi.astro` — 四十九日計算
 - `eigyobi.astro` — 営業日計算
 - `seigo.astro` — 生後日数計算
@@ -67,6 +68,7 @@
 ## 運用メモ
 
 - **更新の流れ**: ファイル編集 → `git push origin main` → 自動デプロイ（1〜2分）
+- **年次更新（毎年）**: 祝日は `scripts/update-holidays.mjs` で更新。六曜の旧暦朔日テーブルは `src/lib/rokuyo.js` の `MONTH_STARTS` に翌年分を手動追加し `KYUREKI_RANGE.to` を更新（国立天文台の暦要項に基づく旧暦カレンダーと照合し、`scripts/test-core.mjs` に照合値を追加して検証）
 - **ローカル確認**: `npm run dev`（開発サーバー）/ `npm run build`（本番ビルド確認）
 - **AdSense 審査中〜通過後のTODO**:
   - 各ツールページの解説文を充実させる（審査通過率とSEOに有効）

@@ -1,5 +1,6 @@
 // ui.js — 結果表示の共通部品（クライアント側）
 import { WEEKDAYS_JA, toYmd, toWareki, holidayName, formatJa } from "./dateCore.js";
+import { rokuyo } from "./rokuyo.js";
 
 const esc = (s) =>
   String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
@@ -9,13 +10,15 @@ export function himekuriHTML(date) {
   const w = date.getDay();
   const holiday = holidayName(date);
   const isRed = w === 0 || holiday !== null;
-  const wareki = toWareki(date);
+  // 和暦と六曜（六曜はデータ範囲内のときだけ）を小さく併記する
+  const r = rokuyo(date);
+  const subLine = [toWareki(date), r && r.name].filter(Boolean).join("・");
   return `
-    <div class="himekuri" role="img" aria-label="${esc(formatJa(date))}${holiday ? " " + esc(holiday) : ""}">
+    <div class="himekuri" role="img" aria-label="${esc(formatJa(date))}${holiday ? " " + esc(holiday) : ""}${r ? " " + esc(r.name) : ""}">
       <div class="himekuri-band${isRed ? " is-red" : ""}">${WEEKDAYS_JA[w]}曜日</div>
       <div class="himekuri-ym">${date.getFullYear()}年 ${date.getMonth() + 1}月</div>
       <div class="himekuri-day${isRed ? " is-red" : ""}">${date.getDate()}</div>
-      <div class="himekuri-wareki">${wareki ? esc(wareki) : ""}</div>
+      <div class="himekuri-wareki">${subLine ? esc(subLine) : ""}</div>
       ${holiday ? `<div class="himekuri-note">${esc(holiday)}</div>` : ""}
     </div>`;
 }
