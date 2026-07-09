@@ -314,7 +314,11 @@ a:focus-visible, summary:focus-visible {
   z-index: 10;
 }
 .to-top.is-visible { opacity: 1; visibility: visible; transform: none; }
-.to-top:hover { color: #fff; background: var(--ai); border-color: var(--ai); }
+/* タップ後に:hoverが残らないよう、ホバー可能なデバイスに限定する */
+@media (hover: hover) {
+  .to-top:hover { color: #fff; background: var(--ai); border-color: var(--ai); }
+}
+.to-top:active { color: #fff; background: var(--ai); border-color: var(--ai); }
 .to-top:focus-visible { outline: 2px solid var(--ai); outline-offset: 2px; }
 
 /* ---------- レスポンシブ ---------- */
